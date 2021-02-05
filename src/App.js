@@ -1,6 +1,6 @@
 import './App.css';
 import Welcome from './Components/Welcome';
-import Counter from './Components/Counter';
+import ToDo from './Components/ToDo';
 
 function App() {
   
@@ -9,7 +9,7 @@ function App() {
       <div className="welcome">
         <Welcome />
       </div>
-      <Counter counter={2} /> 
+      <ToDo /> 
     </div>
   );
 }
