@@ -1,11 +1,19 @@
 import { Component } from "react";
 import Task from "./Task";
+import AddNewTask from "./AddNewTask";
 class ToDo extends Component {
     constructor(props) {
         super();
         this.state = {
-            tasks: ['Task1', 'Task2', 'Task3']
+            tasks: ['Task1', 'Task2', 'Task3'],
+            inputeValue: ''
         }
+    }
+
+    handleCatchValue = (inputValue) => {
+        this.setState(prevState => ({
+            tasks: [...prevState.tasks, inputValue]
+        }))
     }
     render() {
         const tasks = this.state.tasks.map((task, index) => {
@@ -18,10 +26,7 @@ class ToDo extends Component {
                 <div className="tasks">
                     {tasks}
                 </div>
-                <div>
-                    <input type="text" name="task_name" />
-                    <button>Add Task</button>
-                </div>
+                <AddNewTask onSubmit={this.handleCatchValue} />
             </div>
 
         )

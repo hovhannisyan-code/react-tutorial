@@ -1,6 +1,6 @@
 import './App.css';
 import Welcome from './Components/Welcome';
-import ToDo from './Components/ToDo';
+import ToDo from './Components/ToDo/ToDo';
 
 function App() {
   
