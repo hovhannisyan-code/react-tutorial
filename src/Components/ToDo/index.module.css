@@ -1,0 +1,5 @@
+.task {
+    width: 100%;
+    border: 1px solid #000;
+    background: rgba(214, 103, 103, .3);
+}
