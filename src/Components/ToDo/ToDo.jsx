@@ -2,6 +2,7 @@ import { Component } from "react";
 import Task from "./Task";
 import AddNewTask from "./AddNewTask";
 import {Container, Row, Col} from 'react-bootstrap';
+import idGenrator from '../Helpers';
 
 class ToDo extends Component {
     constructor(props) {
@@ -24,10 +25,9 @@ class ToDo extends Component {
         })
     }
     render() {
-        const taskJsxArr = [];
         const tasks = this.state.tasks.map((task, index) => {
             return (
-                <Col key={index} xs={12} sm={6} md={4} lg={3}  className="d-flex justify-content-center mt-3 align-items-center">
+                <Col key={idGenrator()} xs={12} sm={6} md={4} lg={3}  className="d-flex justify-content-center mt-3 align-items-center">
                     <Task task={task}/>
                 </Col>                
             )
