@@ -1,4 +1,5 @@
 import { Component } from "react";
+import { Form, Button } from 'react-bootstrap';
 
 class AddNewTask extends Component {
     state = {
@@ -9,9 +10,10 @@ class AddNewTask extends Component {
             inputValue: e.target.value
         })
     }
-    handleSubmit = (e) => {
-        const {onSubmit} = this.props;
-        const {inputValue} = this.state;
+    handleSubmit = ({ key, type }) => {
+        if (type === 'keypress' && key !== 'Enter') return;
+        const { onSubmit } = this.props;
+        const { inputValue } = this.state;
         onSubmit(inputValue);
         this.setState({
             inputValue: ''
@@ -20,14 +22,23 @@ class AddNewTask extends Component {
     render() {
         const { inputValue } = this.state;
         return (
-            <div>
-                <input
+            <div className="d-flex justify-content-center mt-4">
+                <Form.Control
                     type="text"
-                    placeholder="input"
+                    placeholder="Add Task"
                     onChange={this.handleChange}
+                    onKeyPress={this.handleSubmit}
                     value={inputValue}
+                    style={{ width: "70%" }}
+
                 />
-                <button onClick={this.handleSubmit}>Add Task</button>
+                <Button
+                    variant="primary"
+                    onClick={this.handleSubmit}
+                    disabled={!!!inputValue}
+                >
+                    Add
+                </Button>
             </div>
 
         )
