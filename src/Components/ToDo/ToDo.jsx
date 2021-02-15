@@ -7,7 +7,26 @@ import idGenrator from '../Helpers';
 class ToDo extends Component {
     constructor(props) {
         super();
-        const tasks = [];
+        const tasks = [
+            {
+                _id: idGenrator(),
+                title: "Task 1",
+                text: `Some quick example text to build on the card title and make up the bulk of
+                the card's content.`
+            },
+            {
+                _id: idGenrator(),
+                title: "Task 2",
+                text: `Some quick example text to build on the card title and make up the bulk of
+                the card's content.`
+            },
+            {
+                _id: idGenrator(),
+                title: "Task 2",
+                text: `Some quick example text to build on the card title and make up the bulk of
+                the card's content.`
+            }
+        ];
         for (let i = 0; i < 20; i++ ) {
             tasks.push(`Task ${i+1}`)
         }
@@ -27,7 +46,7 @@ class ToDo extends Component {
     render() {
         const tasks = this.state.tasks.map((task, index) => {
             return (
-                <Col key={idGenrator()} xs={12} sm={6} md={4} lg={3}  className="d-flex justify-content-center mt-3 align-items-center">
+                <Col key={task._id} xs={12} sm={6} md={4} lg={3}  className="d-flex justify-content-center mt-3 align-items-center">
                     <Task task={task}/>
                 </Col>                
             )
