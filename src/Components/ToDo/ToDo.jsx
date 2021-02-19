@@ -32,7 +32,7 @@ class ToDo extends Component {
         // }
         this.state = {
             tasks,
-            removeTasks: []
+            removeTasks: new Set()
         }
     }
 
@@ -58,27 +58,42 @@ class ToDo extends Component {
         });
     }
     toggleSetRemoveIds = (_id) => {
-        let removeTasks = [...this.state.removeTasks];
-        if (removeTasks.includes(_id)) {
-            removeTasks = removeTasks.filter(id => id !== _id)
+        let removeTasks = new Set(this.state.removeTasks);
+        if (removeTasks.has(_id)) {
+            removeTasks.delete(_id);
         } else {
-            removeTasks.push(_id);
+            removeTasks.add(_id);
         }
         this.setState({
             removeTasks
         })
     }
     removeSelectedTasks = () => {
-        
+        let tasks = [...this.state.tasks];
+        const { removeTasks } = this.state;
+        tasks = tasks.filter(task => !removeTasks.has(task._id));
+        this.setState({
+            tasks,
+            removeTasks: new Set()
+        })
     }
     render() {
+        const { removeTasks } = this.state;
         const tasks = this.state.tasks.map((task, index) => {
             return (
-                <Col key={task._id} xs={12} sm={6} md={4} lg={3} className="d-flex justify-content-center mt-3 align-items-center">
+                <Col
+                    key={task._id}
+                    xs={12}
+                    sm={6}
+                    md={4}
+                    lg={3}
+                    className="d-flex justify-content-center mt-3 align-items-center">
                     <Task
                         task={task}
+                        disabled={!!removeTasks.size}
                         handleDelete={this.handleDelete}
                         toggleSetRemoveIds={this.toggleSetRemoveIds}
+                        checked={removeTasks.has(task._id)}
                     />
                 </Col>
             )
@@ -87,15 +102,21 @@ class ToDo extends Component {
             <Container className="todo-list">
                 <Row className="justify-content-center my-5">
                     <Col>
-                        <AddNewTask onSubmit={this.handleCatchValue} />
+                        <AddNewTask disabled={!!removeTasks.size} onSubmit={this.handleCatchValue} />
                     </Col>
                 </Row>
                 <Row className="justify-content-center mt-3">
                     {tasks}
                 </Row>
-                <Row>
+                <Row className="mt-5">
                     <Col>
-                        <Button variant="danger" onClick={this.removeSelectedTasks}>Remove Selected</Button>
+                        <Button
+                            variant="danger"
+                            onClick={this.removeSelectedTasks}
+                            disabled={!!!removeTasks.size}
+                        >
+                            Remove Selected
+                            </Button>
                     </Col>
                 </Row>
             </Container>

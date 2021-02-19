@@ -3,8 +3,10 @@
     border: 1px solid #000;
     background: rgba(214, 103, 103, .3);
 }
-.taskcard {
+.card {
     width: 18rem;
-    background-color: rgb(163, 126, 126,.8);
-    color:#fff
+}
+.checked {
+    background: rosybrown !important;
+    color: #fff;
 }

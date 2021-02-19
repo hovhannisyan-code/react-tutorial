@@ -1,11 +1,18 @@
-import { Card, Button, Form } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
 import styles from './index.module.css';
+import { Card, Button, Form } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 
-const Task = ({ task, handleDelete, toggleSetRemoveIds }) => {
+
+const Task = ({
+    task,
+    disabled,
+    handleDelete,
+    toggleSetRemoveIds,
+    checked
+}) => {
     return (
-        <Card className={styles.taskcard}>
+        <Card className={`${checked && styles.checked}`}>
             <Form.Check type="checkbox" className="justify-content-end d-flex" onClick={() => toggleSetRemoveIds(task._id)} />
             <Card.Body>
                 <Card.Title>{task.title}</Card.Title>
@@ -14,11 +21,17 @@ const Task = ({ task, handleDelete, toggleSetRemoveIds }) => {
                     {task.text}
                 </Card.Text>
                 <Button
+                    disabled={disabled}
                     variant="danger"
                     onClick={() => handleDelete(task._id)}>
                     <FontAwesomeIcon icon={faTrash} />
                 </Button>
-                <Button variant="warning" className="ml-3"><FontAwesomeIcon icon={faEdit} /></Button>
+                <Button
+                    disabled={disabled}
+                    variant="warning"
+                    className="ml-3">
+                    <FontAwesomeIcon icon={faEdit} />
+                </Button>
             </Card.Body>
         </Card>
 

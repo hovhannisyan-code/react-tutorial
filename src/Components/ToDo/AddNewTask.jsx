@@ -21,6 +21,7 @@ class AddNewTask extends Component {
     }
     render() {
         const { inputValue } = this.state;
+        const { disabled } = this.props;
         return (
             <div className="d-flex justify-content-center mt-4">
                 <Form.Control
@@ -30,7 +31,7 @@ class AddNewTask extends Component {
                     onKeyPress={this.handleSubmit}
                     value={inputValue}
                     style={{ width: "70%" }}
-
+                    disabled={disabled}
                 />
                 <Button
                     variant="primary"
