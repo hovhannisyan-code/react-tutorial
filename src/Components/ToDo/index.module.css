@@ -3,3 +3,8 @@
     border: 1px solid #000;
     background: rgba(214, 103, 103, .3);
 }
+.taskcard {
+    width: 18rem;
+    background-color: rgb(163, 126, 126,.8);
+    color:#fff
+}

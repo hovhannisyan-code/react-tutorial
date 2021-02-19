@@ -1,16 +1,15 @@
 import { Card, Button, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
-// import styles from './index.module.css';
+import styles from './index.module.css';
 
-const Task = ({ task, handleDelete }) => {
+const Task = ({ task, handleDelete, toggleSetRemoveIds }) => {
     return (
-        <Card style={{ width: '18rem' }}>
-            <Form.Check type="checkbox" className="justify-content-end d-flex" />
-            {/* <Card.Img variant="top" src="holder.js/100px180" /> */}
+        <Card className={styles.taskcard}>
+            <Form.Check type="checkbox" className="justify-content-end d-flex" onClick={() => toggleSetRemoveIds(task._id)} />
             <Card.Body>
                 <Card.Title>{task.title}</Card.Title>
-                
+
                 <Card.Text>
                     {task.text}
                 </Card.Text>

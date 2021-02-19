@@ -1,7 +1,7 @@
 import { Component } from "react";
 import Task from "./Task";
 import AddNewTask from "./AddNewTask";
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Button } from 'react-bootstrap';
 import idGenrator from '../Helpers';
 
 class ToDo extends Component {
@@ -31,7 +31,8 @@ class ToDo extends Component {
         //     tasks.push(`Task ${i+1}`)
         // }
         this.state = {
-            tasks
+            tasks,
+            removeTasks: []
         }
     }
 
@@ -51,10 +52,24 @@ class ToDo extends Component {
     handleDelete = (id) => {
         let tasks = [...this.state.tasks];
         tasks = tasks.filter(item => item._id !== id)
-            
+
         this.setState({
             tasks
         });
+    }
+    toggleSetRemoveIds = (_id) => {
+        let removeTasks = [...this.state.removeTasks];
+        if (removeTasks.includes(_id)) {
+            removeTasks = removeTasks.filter(id => id !== _id)
+        } else {
+            removeTasks.push(_id);
+        }
+        this.setState({
+            removeTasks
+        })
+    }
+    removeSelectedTasks = () => {
+        
     }
     render() {
         const tasks = this.state.tasks.map((task, index) => {
@@ -63,6 +78,7 @@ class ToDo extends Component {
                     <Task
                         task={task}
                         handleDelete={this.handleDelete}
+                        toggleSetRemoveIds={this.toggleSetRemoveIds}
                     />
                 </Col>
             )
@@ -70,10 +86,17 @@ class ToDo extends Component {
         return (
             <Container className="todo-list">
                 <Row className="justify-content-center my-5">
-                    <AddNewTask onSubmit={this.handleCatchValue} />
+                    <Col>
+                        <AddNewTask onSubmit={this.handleCatchValue} />
+                    </Col>
                 </Row>
                 <Row className="justify-content-center mt-3">
                     {tasks}
+                </Row>
+                <Row>
+                    <Col>
+                        <Button variant="danger" onClick={this.removeSelectedTasks}>Remove Selected</Button>
+                    </Col>
                 </Row>
             </Container>
 
