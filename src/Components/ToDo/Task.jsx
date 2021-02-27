@@ -1,4 +1,4 @@
-import React, {memo} from "react";
+import React, { memo } from "react";
 import styles from './index.module.css';
 import { Card, Button, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,10 +12,14 @@ const Task = ({
     toggleSetRemoveIds,
     checked
 }) => {
-    console.log('Render')
     return (
         <Card className={`${checked && styles.checked}`}>
-            <Form.Check type="checkbox" className="justify-content-end d-flex" onClick={() => toggleSetRemoveIds(task._id)} />
+            <Form.Check
+                type="checkbox"
+                className="justify-content-end d-flex"
+                onChange={() => toggleSetRemoveIds(task._id)}
+                checked={checked}
+            />
             <Card.Body>
                 <Card.Title>{task.title}</Card.Title>
 

@@ -6,7 +6,7 @@ import idGenrator from '../Helpers';
 
 class ToDo extends Component {
     constructor(props) {
-        super();
+        super(props);
         const tasks = [
             {
                 _id: idGenrator(),
@@ -32,7 +32,8 @@ class ToDo extends Component {
         // }
         this.state = {
             tasks,
-            removeTasks: new Set()
+            removeTasks: new Set(),
+            isAllChecked: false
         }
     }
 
@@ -70,15 +71,33 @@ class ToDo extends Component {
     }
     removeSelectedTasks = () => {
         let tasks = [...this.state.tasks];
-        const { removeTasks } = this.state;
+        const { removeTasks, isAllChecked } = this.state;
         tasks = tasks.filter(task => !removeTasks.has(task._id));
         this.setState({
             tasks,
-            removeTasks: new Set()
+            removeTasks: new Set(),
+            isAllChecked: !isAllChecked
         })
     }
+    handleToggleSelectAll = () => {
+        let removeTasks = new Set(this.state.removeTasks);
+        let { tasks, isAllChecked } = this.state;
+        if (!isAllChecked) {
+            tasks.forEach(task => {
+                removeTasks.add(task._id);
+            })
+        } else {
+            removeTasks = new Set()
+        }
+
+        this.setState({
+            removeTasks,
+            isAllChecked: !isAllChecked
+        })
+
+    }
     render() {
-        const { removeTasks } = this.state;
+        const { removeTasks, isAllChecked } = this.state;
         const tasks = this.state.tasks.map((task, index) => {
             return (
                 <Col
@@ -110,13 +129,20 @@ class ToDo extends Component {
                 </Row>
                 <Row className="mt-5">
                     <Col>
-                        <Button
+                        {!!tasks.length && <Button
                             variant="danger"
                             onClick={this.removeSelectedTasks}
                             disabled={!!!removeTasks.size}
                         >
                             Remove Selected
-                            </Button>
+                        </Button>}
+                        {!!tasks.length && <Button
+                            className="ml-3"
+                            variant="primary"
+                            onClick={this.handleToggleSelectAll}
+                        >
+                            {isAllChecked ? 'Remove All Selected' : 'Select All'}
+                        </Button>}
                     </Col>
                 </Row>
             </Container>
