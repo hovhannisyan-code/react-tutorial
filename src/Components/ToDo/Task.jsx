@@ -3,7 +3,7 @@ import styles from './index.module.css';
 import { Card, Button, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
-
+import Proptypes from 'prop-types';
 
 const Task = ({
     task,
@@ -43,5 +43,12 @@ const Task = ({
 
     )
 
+};
+Task.propTypes = {
+    task: Proptypes.object.isRequired,
+    disabled: Proptypes.bool.isRequired,
+    handleDelete: Proptypes.func.isRequired,
+    toggleSetRemoveIds: Proptypes.func.isRequired,
+    checked: Proptypes.bool.isRequired
 }
 export default memo(Task);
