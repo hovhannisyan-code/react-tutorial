@@ -3,6 +3,7 @@ import Task from "./Task";
 import AddNewTask from "./AddNewTask";
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import idGenrator from '../Helpers';
+import Confirm from "../Modal/Confirm";
 
 class ToDo extends Component {
     constructor(props) {
@@ -11,19 +12,19 @@ class ToDo extends Component {
             {
                 _id: idGenrator(),
                 title: "Task 1",
-                text: `Some quick example text to build on the card title and make up the bulk of
+                description: `Some quick example text to build on the card title and make up the bulk of
                 the card's content.`
             },
             {
                 _id: idGenrator(),
                 title: "Task 2",
-                text: `Some quick example text to build on the card title and make up the bulk of
+                description: `Some quick example text to build on the card title and make up the bulk of
                 the card's content.`
             },
             {
                 _id: idGenrator(),
                 title: "Task 3",
-                text: `Some quick example text to build on the card title and make up the bulk of
+                description: `Some quick example text to build on the card title and make up the bulk of
                 the card's content.`
             }
         ];
@@ -33,18 +34,18 @@ class ToDo extends Component {
         this.state = {
             tasks,
             removeTasks: new Set(),
-            isAllChecked: false
+            isAllChecked: false,
+            showModal: false
         }
     }
 
-    handleCatchValue = (inputValue) => {
-        if (!inputValue) return;
+    handleCatchValue = (taskdata) => {
+        if (!taskdata.title || !taskdata.description) return;
         const tasks = [...this.state.tasks];
         tasks.push({
             _id: idGenrator(),
-            title: inputValue,
-            text: `Some quick example text to build on the card title and make up the bulk of
-            the card's content.`
+            title: taskdata.title,
+            description: taskdata.description
         });
         this.setState({
             tasks
@@ -96,8 +97,13 @@ class ToDo extends Component {
         })
 
     }
+    handleToggleModal = () => {
+        this.setState({
+            showModal: !this.state.showModal
+        })
+    }
     render() {
-        const { removeTasks, isAllChecked } = this.state;
+        const { removeTasks, isAllChecked, showModal } = this.state;
         const tasks = this.state.tasks.map((task, index) => {
             return (
                 <Col
@@ -118,35 +124,42 @@ class ToDo extends Component {
             )
         });
         return (
-            <Container className="todo-list">
-                <Row className="justify-content-center my-5">
-                    <Col>
-                        <AddNewTask disabled={!!removeTasks.size} onSubmit={this.handleCatchValue} />
-                    </Col>
-                </Row>
-                <Row className="justify-content-center mt-3">
-                    {tasks}
-                </Row>
-                <Row className="mt-5">
-                    <Col>
-                        {!!tasks.length && <Button
-                            variant="danger"
-                            onClick={this.removeSelectedTasks}
-                            disabled={!!!removeTasks.size}
-                        >
-                            Remove Selected
+            <>
+                <Container className="todo-list">
+                    <Row className="justify-content-center my-5">
+                        <Col>
+                            <AddNewTask disabled={!!removeTasks.size} onSubmit={this.handleCatchValue} />
+                        </Col>
+                    </Row>
+                    <Row className="justify-content-center mt-3">
+                        {tasks}
+                    </Row>
+                    <Row className="mt-5">
+                        <Col>
+                            {!!tasks.length && <Button
+                                variant="danger"
+                                onClick={this.handleToggleModal}
+                                disabled={!!!removeTasks.size}
+                            >
+                                Remove Selected
                         </Button>}
-                        {!!tasks.length && <Button
-                            className="ml-3"
-                            variant="primary"
-                            onClick={this.handleToggleSelectAll}
-                        >
-                            {isAllChecked ? 'Remove All Selected' : 'Select All'}
-                        </Button>}
-                    </Col>
-                </Row>
-            </Container>
-
+                            {!!tasks.length && <Button
+                                className="ml-3"
+                                variant="primary"
+                                onClick={this.handleToggleSelectAll}
+                            >
+                                {isAllChecked ? 'Remove All Selected' : 'Select All'}
+                            </Button>}
+                        </Col>
+                    </Row>
+                </Container>
+                {showModal && <Confirm
+                    handleClose={this.handleToggleModal}
+                    onSubmit={this.removeSelectedTasks}
+                    modalTitle={`Modal heading`}
+                    modalBody={`Do you want to delete ${removeTasks.size} tasks`}
+                />}
+            </>
         )
     }
 }

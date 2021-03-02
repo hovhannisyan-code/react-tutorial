@@ -4,7 +4,7 @@ import { Card, Button, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import Proptypes from 'prop-types';
-
+import Confirm from "../Modal/Confirm";
 const Task = ({
     task,
     disabled,
@@ -24,7 +24,7 @@ const Task = ({
                 <Card.Title>{task.title}</Card.Title>
 
                 <Card.Text>
-                    {task.text}
+                    {task.description}
                 </Card.Text>
                 <Button
                     disabled={disabled}
@@ -45,7 +45,11 @@ const Task = ({
 
 };
 Task.propTypes = {
-    task: Proptypes.object.isRequired,
+    task: Proptypes.shape({
+        _id:Proptypes.string.isRequired,
+        title: Proptypes.string.isRequired,
+        description:Proptypes.string.isRequired
+    }),
     disabled: Proptypes.bool.isRequired,
     handleDelete: Proptypes.func.isRequired,
     toggleSetRemoveIds: Proptypes.func.isRequired,
