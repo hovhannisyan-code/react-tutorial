@@ -1,9 +1,10 @@
 import { Component } from "react";
-import Task from "./Task";
-import AddNewTask from "./AddNewTask";
+import Task from './Task';
+import AddNewTask from './AddNewTask';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import idGenrator from '../Helpers';
-import Confirm from "../Modal/Confirm";
+import Confirm from '../Modals/Confirm';
+import EditTask from '../Modals/EditTask';
 
 class ToDo extends Component {
     constructor(props) {
@@ -35,7 +36,8 @@ class ToDo extends Component {
             tasks,
             removeTasks: new Set(),
             isAllChecked: false,
-            showModal: false
+            showModal: false,
+            editTask: null
         }
     }
 
@@ -102,8 +104,22 @@ class ToDo extends Component {
             showModal: !this.state.showModal
         })
     }
+    handleSetEditTaskToggle = (task) => {
+        task = task || null;
+        this.setState({
+            editTask: task
+        });
+    }
+    handleSetEdit = (editTask) => {
+        const tasks = [...this.state.tasks];
+        const index = tasks.findIndex(task => task._id === editTask._id);
+        tasks[index] = editTask;
+        this.setState({
+            tasks
+        });
+    }
     render() {
-        const { removeTasks, isAllChecked, showModal } = this.state;
+        const { removeTasks, isAllChecked, showModal, editTask } = this.state;
         const tasks = this.state.tasks.map((task, index) => {
             return (
                 <Col
@@ -119,6 +135,7 @@ class ToDo extends Component {
                         handleDelete={this.handleDelete}
                         toggleSetRemoveIds={this.toggleSetRemoveIds}
                         checked={removeTasks.has(task._id)}
+                        handleSetEditTask={this.handleSetEditTaskToggle}
                     />
                 </Col>
             )
@@ -158,6 +175,11 @@ class ToDo extends Component {
                     onSubmit={this.removeSelectedTasks}
                     modalTitle={`Modal heading`}
                     modalBody={`Do you want to delete ${removeTasks.size} tasks`}
+                />}
+                {editTask && <EditTask
+                    editTask={editTask}
+                    onHide={this.handleSetEditTaskToggle}
+                    onSubmit={this.handleSetEdit}
                 />}
             </>
         )

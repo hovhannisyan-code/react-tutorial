@@ -4,13 +4,13 @@ import { Card, Button, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import Proptypes from 'prop-types';
-import Confirm from "../Modal/Confirm";
 const Task = ({
     task,
     disabled,
     handleDelete,
     toggleSetRemoveIds,
-    checked
+    checked,
+    handleSetEditTask
 }) => {
     return (
         <Card className={`${checked && styles.checked}`}>
@@ -35,7 +35,9 @@ const Task = ({
                 <Button
                     disabled={disabled}
                     variant="warning"
-                    className="ml-3">
+                    className="ml-3"
+                    onClick={() => handleSetEditTask(task)}
+                >
                     <FontAwesomeIcon icon={faEdit} />
                 </Button>
             </Card.Body>
@@ -46,13 +48,14 @@ const Task = ({
 };
 Task.propTypes = {
     task: Proptypes.shape({
-        _id:Proptypes.string.isRequired,
+        _id: Proptypes.string.isRequired,
         title: Proptypes.string.isRequired,
-        description:Proptypes.string.isRequired
+        description: Proptypes.string.isRequired
     }),
     disabled: Proptypes.bool.isRequired,
     handleDelete: Proptypes.func.isRequired,
     toggleSetRemoveIds: Proptypes.func.isRequired,
-    checked: Proptypes.bool.isRequired
+    checked: Proptypes.bool.isRequired,
+    handleSetEditTask: Proptypes.func.isRequired
 }
 export default memo(Task);
