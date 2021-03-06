@@ -153,6 +153,7 @@ class ToDo extends Component {
                         </Col>
                     </Row>
                     <Row className="justify-content-center mt-3">
+                        {!tasks.length && <div>Tasks is Empty</div>}
                         {tasks}
                     </Row>
                     <Row className="mt-5">
