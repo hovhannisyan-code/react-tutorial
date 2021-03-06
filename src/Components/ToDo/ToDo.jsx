@@ -1,10 +1,9 @@
 import { Component } from "react";
 import Task from './Task';
-import AddNewTask from './AddNewTask';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import idGenrator from '../Helpers';
 import Confirm from '../Modals/Confirm';
-import EditTask from '../Modals/EditTask';
+import TaskModal from '../Modals/TaskModal';
 
 class ToDo extends Component {
     constructor(props) {
@@ -37,21 +36,27 @@ class ToDo extends Component {
             removeTasks: new Set(),
             isAllChecked: false,
             showModal: false,
-            editTask: null
+            editTask: null,
+            openTaskModal: false
         }
     }
 
     handleCatchValue = (taskdata) => {
         if (!taskdata.title || !taskdata.description) return;
         const tasks = [...this.state.tasks];
-        tasks.push({
-            _id: idGenrator(),
-            title: taskdata.title,
-            description: taskdata.description
-        });
+        if (taskdata.edit) {
+            const index = tasks.findIndex(task => task._id === taskdata._id);
+            tasks[index] = taskdata;
+        } else {
+            tasks.push({
+                _id: idGenrator(),
+                title: taskdata.title,
+                description: taskdata.description
+            });
+        }
         this.setState({
             tasks
-        })
+        });
     }
     handleDelete = (id) => {
         let tasks = [...this.state.tasks];
@@ -104,22 +109,15 @@ class ToDo extends Component {
             showModal: !this.state.showModal
         })
     }
-    handleSetEditTaskToggle = (task) => {
-        task = task || null;
+    handleToggleTaskModal = (task) => {
+        const editTask = task && task._id ? task : false;
         this.setState({
-            editTask: task
-        });
-    }
-    handleSetEdit = (editTask) => {
-        const tasks = [...this.state.tasks];
-        const index = tasks.findIndex(task => task._id === editTask._id);
-        tasks[index] = editTask;
-        this.setState({
-            tasks
+            editTask: editTask,
+            openTaskModal: !this.state.openTaskModal
         });
     }
     render() {
-        const { removeTasks, isAllChecked, showModal, editTask } = this.state;
+        const { removeTasks, isAllChecked, showModal, editTask, openTaskModal } = this.state;
         const tasks = this.state.tasks.map((task, index) => {
             return (
                 <Col
@@ -135,7 +133,7 @@ class ToDo extends Component {
                         handleDelete={this.handleDelete}
                         toggleSetRemoveIds={this.toggleSetRemoveIds}
                         checked={removeTasks.has(task._id)}
-                        handleSetEditTask={this.handleSetEditTaskToggle}
+                        handleSetEditTask={this.handleToggleTaskModal}
                     />
                 </Col>
             )
@@ -145,7 +143,13 @@ class ToDo extends Component {
                 <Container className="todo-list">
                     <Row className="justify-content-center my-5">
                         <Col>
-                            <AddNewTask disabled={!!removeTasks.size} onSubmit={this.handleCatchValue} />
+                            <Button
+                                className="ml-3"
+                                variant="primary"
+                                onClick={this.handleToggleTaskModal}
+                            >
+                                Add Task
+                            </Button>
                         </Col>
                     </Row>
                     <Row className="justify-content-center mt-3">
@@ -176,10 +180,10 @@ class ToDo extends Component {
                     modalTitle={`Modal heading`}
                     modalBody={`Do you want to delete ${removeTasks.size} tasks`}
                 />}
-                {editTask && <EditTask
+                {openTaskModal && <TaskModal
                     editTask={editTask}
-                    onHide={this.handleSetEditTaskToggle}
-                    onSubmit={this.handleSetEdit}
+                    onHide={this.handleToggleTaskModal}
+                    onSubmit={this.handleCatchValue}
                 />}
             </>
         )
