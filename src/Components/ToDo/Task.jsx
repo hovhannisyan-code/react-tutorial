@@ -4,6 +4,7 @@ import { Card, Button, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import Proptypes from 'prop-types';
+import DateYMD from '../helpers/date';
 const Task = ({
     task,
     disabled,
@@ -25,6 +26,12 @@ const Task = ({
 
                 <Card.Text>
                     {task.description}
+                </Card.Text>
+                <Card.Text>
+                    End date: {DateYMD(task.date)}
+                </Card.Text>
+                <Card.Text>
+                    Created: {DateYMD(task.created_at)}
                 </Card.Text>
                 <Button
                     disabled={disabled}

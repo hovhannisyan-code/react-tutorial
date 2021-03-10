@@ -1,36 +1,14 @@
 import { Component } from "react";
 import Task from './Task';
 import { Container, Row, Col, Button } from 'react-bootstrap';
-import idGenrator from '../Helpers';
+import DateYMD from '../helpers/date';
 import Confirm from '../Modals/Confirm';
 import TaskModal from '../Modals/TaskModal';
 
 class ToDo extends Component {
     constructor(props) {
         super(props);
-        const tasks = [
-            {
-                _id: idGenrator(),
-                title: "Task 1",
-                description: `Some quick example text to build on the card title and make up the bulk of
-                the card's content.`
-            },
-            {
-                _id: idGenrator(),
-                title: "Task 2",
-                description: `Some quick example text to build on the card title and make up the bulk of
-                the card's content.`
-            },
-            {
-                _id: idGenrator(),
-                title: "Task 3",
-                description: `Some quick example text to build on the card title and make up the bulk of
-                the card's content.`
-            }
-        ];
-        // for (let i = 0; i < 20; i++ ) {
-        //     tasks.push(`Task ${i+1}`)
-        // }
+        const tasks = [];
         this.state = {
             tasks,
             removeTasks: new Set(),
@@ -43,16 +21,37 @@ class ToDo extends Component {
 
     handleCatchValue = (taskdata) => {
         if (!taskdata.title || !taskdata.description) return;
+        taskdata.date = DateYMD(taskdata.date);
         const tasks = [...this.state.tasks];
         if (taskdata.edit) {
             const index = tasks.findIndex(task => task._id === taskdata._id);
             tasks[index] = taskdata;
         } else {
-            tasks.push({
-                _id: idGenrator(),
-                title: taskdata.title,
-                description: taskdata.description
-            });
+            fetch("http://localhost:3001/task", {
+                method: 'POST',
+                body: JSON.stringify(taskdata),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        throw data.error;
+                    }
+                    tasks.push(data);
+                    this.setState({
+                        tasks
+                    });
+                })
+                .catch(error => {
+                    console.log('catch Error', error);
+                });
+            // tasks.push({
+            //     _id: idGenrator(),
+            //     title: taskdata.title,
+            //     description: taskdata.description
+            // });
         }
         this.setState({
             tasks
@@ -78,14 +77,31 @@ class ToDo extends Component {
         })
     }
     removeSelectedTasks = () => {
-        let tasks = [...this.state.tasks];
-        const { removeTasks, isAllChecked } = this.state;
-        tasks = tasks.filter(task => !removeTasks.has(task._id));
-        this.setState({
-            tasks,
-            removeTasks: new Set(),
-            isAllChecked: !isAllChecked
+        fetch("http://localhost:3001/task", {
+            method: 'PATCH',
+            body: JSON.stringify( {tasks:Array.from(this.state.removeTasks)}),
+            headers: {
+                "Content-Type": "application/json"
+            }
         })
+        .then(res => res.json())
+        .then(data => {
+            if (data.error) {
+                throw data.error;
+            }
+            let tasks = [...this.state.tasks];
+            const { removeTasks, isAllChecked } = this.state;
+            tasks = tasks.filter(task => !removeTasks.has(task._id));
+            this.setState({
+                tasks,
+                removeTasks: new Set(),
+                isAllChecked: !isAllChecked
+            })
+        })
+        .catch(error => {
+            console.log(error)
+        })
+        
     }
     handleToggleSelectAll = () => {
         let removeTasks = new Set(this.state.removeTasks);
@@ -115,6 +131,22 @@ class ToDo extends Component {
             editTask: editTask,
             openTaskModal: !this.state.openTaskModal
         });
+    }
+    componentDidMount() {
+        fetch("http://localhost:3001/task")
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    throw data.error;
+                }
+                this.setState({
+                    tasks: data
+                })
+            })
+            .catch(error => {
+                console.log('error', error);
+            })
+
     }
     render() {
         const { removeTasks, isAllChecked, showModal, editTask, openTaskModal } = this.state;

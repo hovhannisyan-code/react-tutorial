@@ -5,6 +5,7 @@ import './reset.css';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
+import "react-datepicker/dist/react-datepicker.css";
 
 ReactDOM.render(
   <React.StrictMode>

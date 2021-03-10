@@ -1,31 +1,19 @@
 import React from "react";
 import { Form, Button, Modal } from 'react-bootstrap';
 import Proptypes from 'prop-types';
+import DatePicker from "react-datepicker";
 
 class TaskModal extends React.PureComponent {
     constructor(props) {
         super(props);
-        let task = {};
-        if (props.editTask) {
-            const { _id, title, description } = props.editTask;
-            task = {
-                _id,
-                title,
-                description,
-                edit: true
-            }
-
-        } else {
-            task = {
-                _id: '',
-                title: '',
-                description: '',
-                edit: false
-            }
-        }
-
+        const edit = props.editTask ? true : false;
         this.state = {
-            ...task
+            _id: '',
+            title: '',
+            description: '',
+            edit,
+            ...props.editTask,
+            date: props.editTask ? new Date(props.editTask.date) : new Date()
         }
         this.inputRef = React.createRef();
     }
@@ -38,7 +26,7 @@ class TaskModal extends React.PureComponent {
     }
     handleSubmit = ({ key, type }) => {
         const { onSubmit, onHide } = this.props;
-        const { _id, title, description, edit } = this.state;
+        const { _id, title, description, date, edit } = this.state;
         if (
             (type === 'keypress' && key !== 'Enter') ||
             (!title || !description)
@@ -48,16 +36,23 @@ class TaskModal extends React.PureComponent {
             _id,
             title,
             description,
+            date,
             edit
+            
         };
         onSubmit(taskdata);
         onHide();
+    }
+    handleSetDate = (date) => {
+        this.setState({
+            date
+        });
     }
     componentDidMount() {
         this.inputRef.current.focus();
     }
     render() {
-        const { title, description } = this.state;
+        const { title, description, date } = this.state;
         const { onHide } = this.props;
         return (
             <Modal
@@ -94,6 +89,7 @@ class TaskModal extends React.PureComponent {
                         placeholder="Description"
                         value={description}
                     />
+                    <DatePicker selected={date} onChange={date => this.handleSetDate(date)} />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button onClick={onHide}>Close</Button>
