@@ -24,8 +24,29 @@ class ToDo extends Component {
         taskdata.date = DateYMD(taskdata.date);
         const tasks = [...this.state.tasks];
         if (taskdata.edit) {
-            const index = tasks.findIndex(task => task._id === taskdata._id);
-            tasks[index] = taskdata;
+            fetch(`http://localhost:3001/task/${taskdata._id}`, {
+                method: "PUT",
+                body: JSON.stringify(taskdata),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        throw data.error;
+                    }
+                    console.log(data)
+                    const index = tasks.findIndex(task => task._id === data._id);
+                    tasks[index] = data;
+                    this.setState({
+                        tasks
+                    })
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+
         } else {
             fetch("http://localhost:3001/task", {
                 method: 'POST',
@@ -58,12 +79,28 @@ class ToDo extends Component {
         });
     }
     handleDelete = (id) => {
-        let tasks = [...this.state.tasks];
-        tasks = tasks.filter(item => item._id !== id)
+        fetch(`http://localhost:3001/task/${id}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    throw data.error;
+                }
+                let tasks = [...this.state.tasks];
+                tasks = tasks.filter(item => item._id !== id)
 
-        this.setState({
-            tasks
-        });
+                this.setState({
+                    tasks
+                });
+            })
+            .catch(error => {
+                console.log(error)
+            })
+
     }
     toggleSetRemoveIds = (_id) => {
         let removeTasks = new Set(this.state.removeTasks);
@@ -79,29 +116,29 @@ class ToDo extends Component {
     removeSelectedTasks = () => {
         fetch("http://localhost:3001/task", {
             method: 'PATCH',
-            body: JSON.stringify( {tasks:Array.from(this.state.removeTasks)}),
+            body: JSON.stringify({ tasks: Array.from(this.state.removeTasks) }),
             headers: {
                 "Content-Type": "application/json"
             }
         })
-        .then(res => res.json())
-        .then(data => {
-            if (data.error) {
-                throw data.error;
-            }
-            let tasks = [...this.state.tasks];
-            const { removeTasks, isAllChecked } = this.state;
-            tasks = tasks.filter(task => !removeTasks.has(task._id));
-            this.setState({
-                tasks,
-                removeTasks: new Set(),
-                isAllChecked: !isAllChecked
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    throw data.error;
+                }
+                let tasks = [...this.state.tasks];
+                const { removeTasks, isAllChecked } = this.state;
+                tasks = tasks.filter(task => !removeTasks.has(task._id));
+                this.setState({
+                    tasks,
+                    removeTasks: new Set(),
+                    isAllChecked: !isAllChecked
+                })
             })
-        })
-        .catch(error => {
-            console.log(error)
-        })
-        
+            .catch(error => {
+                console.log(error)
+            })
+
     }
     handleToggleSelectAll = () => {
         let removeTasks = new Set(this.state.removeTasks);
