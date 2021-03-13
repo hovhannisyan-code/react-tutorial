@@ -1,20 +1,28 @@
-import './App.css';
-import Welcome from './Components/Welcome';
-import ToDo from './Components/ToDo/ToDo';
-import LifeCycle from './Components/LifeCycle/LifeCycle';
 import { Component } from 'react';
+import Navbar from './Components/Navbar/Navbar';
+import { Redirect, Route, Switch } from 'react-router-dom';
+import './App.css';
+/**
+ * Pages
+ */
+import ToDo from './Components/Pages/ToDo/ToDo';
+import About from './Components/Pages/About/About';
+import Contact from './Components/Pages/Contact/Contacts';
+
 class App extends Component {
-  state = {
-    isLifeCycle: false
-  }
+  
   render() {
     return (
       <div className="App">
-        <div className="welcome">
-          <Welcome />
+        <div className="menu">
+          <Navbar />
+          <Switch>
+            <Route path="/" component={ToDo} exact/>
+            <Route path="/contact" component={Contact} exact/>
+            <Route path="/about" component={About} exact />
+            <Redirect to="/" />
+          </Switch>
         </div>
-        <ToDo /> 
-        {this.state.isLifeCycle && <LifeCycle />}
       </div>
     );
   }

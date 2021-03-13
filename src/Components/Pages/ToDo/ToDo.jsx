@@ -1,9 +1,10 @@
 import { Component } from "react";
 import Task from './Task';
 import { Container, Row, Col, Button } from 'react-bootstrap';
-import DateYMD from '../helpers/date';
-import Confirm from '../Modals/Confirm';
-import TaskModal from '../Modals/TaskModal';
+import DateYMD from '../../helpers/date';
+import Confirm from '../../Modals/Confirm';
+import TaskModal from '../../Modals/TaskModal';
+
 
 class ToDo extends Component {
     constructor(props) {
@@ -210,6 +211,7 @@ class ToDo extends Component {
         return (
             <>
                 <Container className="todo-list">
+                    <h1 className="welcome">To do list</h1>
                     <Row className="justify-content-center my-5">
                         <Col>
                             <Button
