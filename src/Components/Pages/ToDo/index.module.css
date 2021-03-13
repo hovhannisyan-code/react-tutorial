@@ -7,6 +7,16 @@
     width: 18rem;
 }
 .checked {
-    background: rosybrown !important;
+    background: #9c9c9c  !important;
     color: #fff;
+}
+.cardtext {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;  
+}
+.custom_card {
+    box-shadow: 0px 0 30px rgb(1 41 112 / 10%);
 }

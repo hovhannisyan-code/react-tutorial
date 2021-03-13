@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import Proptypes from 'prop-types';
 import DateYMD from '../../helpers/date';
+import { Link } from 'react-router-dom';
 const Task = ({
     task,
     disabled,
@@ -14,7 +15,7 @@ const Task = ({
     handleSetEditTask
 }) => {
     return (
-        <Card className={`${checked && styles.checked}`}>
+        <Card className={`rounded border-0 ${styles.custom_card} ${checked && styles.checked}`}>
             <Form.Check
                 type="checkbox"
                 className="justify-content-end d-flex"
@@ -22,10 +23,17 @@ const Task = ({
                 checked={checked}
             />
             <Card.Body>
-                <Card.Title>{task.title}</Card.Title>
+                <Link to={`/task/${task._id}`}>
+                    <Card.Title>{task.title}</Card.Title>
+                </Link>
 
-                <Card.Text>
+                <Card.Text className={styles.cardtext}>
                     {task.description}
+                </Card.Text>
+                <Card.Text>
+                    <Link to={`/task/${task._id}`}>
+                        Read More →
+                    </Link>
                 </Card.Text>
                 <Card.Text>
                     End date: {DateYMD(task.date)}
@@ -33,6 +41,8 @@ const Task = ({
                 <Card.Text>
                     Created: {DateYMD(task.created_at)}
                 </Card.Text>
+                
+
                 <Button
                     disabled={disabled}
                     variant="danger"

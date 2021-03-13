@@ -1,13 +1,10 @@
-import {Nav} from 'react-bootstrap';
+import {Nav,Navbar} from 'react-bootstrap';
 import {NavLink} from 'react-router-dom'; 
 import styles from '../Navbar/navbar.module.css';
 
-const Navbar = () => {
+const MenuNavbar = () => {
     return (
-        <Nav
-            activeKey="/"
-            onSelect={(selectedKey) => alert(`selected ${selectedKey}`)}
-        >
+        <Navbar bg="light" expand="lg">
             <Nav.Item className={styles.item}>
                 <NavLink to="/" activeClassName={styles.active} exact={true}>Home</NavLink>
             </Nav.Item>
@@ -17,7 +14,7 @@ const Navbar = () => {
             <Nav.Item className={styles.item}> 
                 <NavLink to="/about" activeClassName={styles.active} exact={true}>About Us</NavLink>
             </Nav.Item>
-        </Nav>
+        </Navbar>
     )
 }
-export default Navbar;
+export default MenuNavbar;
