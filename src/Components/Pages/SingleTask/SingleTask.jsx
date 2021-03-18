@@ -5,12 +5,15 @@ import styles from "./singletask.module.css";
 import { Button } from 'react-bootstrap';
 import DateYMD from '../../helpers/date';
 import Confirm from '../../Modals/Confirm';
+import TaskModal from '../../Modals/TaskModal';
+
 class SingleTask extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             singleTask: null,
-            showModal: false
+            showModal: false,
+            openTaskModal: false
         }
     }
     handleToggleModal = () => {
@@ -39,6 +42,35 @@ class SingleTask extends React.Component {
             })
 
     }
+    handleToggleTaskModal = () => {
+        this.setState({
+            openTaskModal: !this.state.openTaskModal
+        });
+    }
+    handleCatchValue = (taskdata) => {
+        if (!taskdata.title || !taskdata.description) return;
+        taskdata.date = DateYMD(taskdata.date);
+        fetch(`http://localhost:3001/task/${taskdata._id}`, {
+            method: "PUT",
+            body: JSON.stringify(taskdata),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    throw data.error;
+                }
+                console.log(data)
+                this.setState({
+                    singleTask:data
+                })
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    }
     componentDidMount() {
         const { id } = this.props.match.params;
         fetch(`http://localhost:3001/task/${id}`)
@@ -56,7 +88,11 @@ class SingleTask extends React.Component {
             })
     }
     render() {
-        const { singleTask, showModal } = this.state;
+        const { 
+            singleTask, 
+            showModal, 
+            openTaskModal 
+        } = this.state;
         if (!singleTask) {
             return <div>
                 Loading...
@@ -79,7 +115,7 @@ class SingleTask extends React.Component {
                     </div>
                     <div className="mt-2">
                         <Button variant="danger" onClick={this.handleToggleModal} className="mr-2">Delete</Button>
-                        <Button variant="warning" onClick={this.handleEdit}>Edit</Button>
+                        <Button variant="warning" onClick={this.handleToggleTaskModal}>Edit</Button>
                     </div>
                 </div>
                 {showModal && <Confirm
@@ -87,6 +123,11 @@ class SingleTask extends React.Component {
                     onSubmit={this.handleDelete}
                     modalTitle={`Are you sure ?`}
                     modalBody={`Do you want to delete ${singleTask.title} task ?`}
+                />}
+                {openTaskModal && <TaskModal
+                    editTask={singleTask}
+                    onHide={this.handleToggleTaskModal}
+                    onSubmit={this.handleCatchValue}
                 />}
             </div>
         )

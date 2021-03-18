@@ -4,6 +4,7 @@ import { Container, Row, Col, Button } from 'react-bootstrap';
 import DateYMD from '../../helpers/date';
 import Confirm from '../../Modals/Confirm';
 import TaskModal from '../../Modals/TaskModal';
+import Preloader from "../../Loader/Preloader";
 
 
 class ToDo extends Component {
@@ -16,7 +17,8 @@ class ToDo extends Component {
             isAllChecked: false,
             showModal: false,
             editTask: null,
-            openTaskModal: false
+            openTaskModal: false,
+            loading: false
         }
     }
 
@@ -25,6 +27,9 @@ class ToDo extends Component {
         taskdata.date = DateYMD(taskdata.date);
         const tasks = [...this.state.tasks];
         if (taskdata.edit) {
+            this.setState({
+                loading: true
+            });
             fetch(`http://localhost:3001/task/${taskdata._id}`, {
                 method: "PUT",
                 body: JSON.stringify(taskdata),
@@ -37,19 +42,29 @@ class ToDo extends Component {
                     if (data.error) {
                         throw data.error;
                     }
-                    console.log(data)
+                    
                     const index = tasks.findIndex(task => task._id === data._id);
                     tasks[index] = data;
+                    this.handleToggleTaskModal();
                     this.setState({
                         tasks
                     })
                 })
                 .catch(error => {
                     console.log(error)
+                    // todo notify
                 })
+                .finally(() => {
+                    this.setState({
+                        loading: false
+                    });
+                });
 
         } else {
-            fetch("http://localhost:3001/task", {
+            this.setState({
+                loading: true
+            });
+            fetch("http://localhost:3001/t", {
                 method: 'POST',
                 body: JSON.stringify(taskdata),
                 headers: {
@@ -62,24 +77,28 @@ class ToDo extends Component {
                         throw data.error;
                     }
                     tasks.push(data);
+                    this.handleToggleTaskModal();
                     this.setState({
                         tasks
                     });
                 })
                 .catch(error => {
                     console.log('catch Error', error);
+                })
+                .finally(() => {
+                    this.setState({
+                        loading: false
+                    });
                 });
-            // tasks.push({
-            //     _id: idGenrator(),
-            //     title: taskdata.title,
-            //     description: taskdata.description
-            // });
         }
         this.setState({
             tasks
         });
     }
     handleDelete = (id) => {
+        this.setState({
+            loading: true
+        });
         fetch(`http://localhost:3001/task/${id}`, {
             method: "DELETE",
             headers: {
@@ -101,6 +120,11 @@ class ToDo extends Component {
             .catch(error => {
                 console.log(error)
             })
+            .finally(() => {
+                this.setState({
+                    loading: false
+                });
+            });
 
     }
     toggleSetRemoveIds = (_id) => {
@@ -115,6 +139,9 @@ class ToDo extends Component {
         })
     }
     removeSelectedTasks = () => {
+        this.setState({
+            loading: true
+        });
         fetch("http://localhost:3001/task", {
             method: 'PATCH',
             body: JSON.stringify({ tasks: Array.from(this.state.removeTasks) }),
@@ -139,6 +166,11 @@ class ToDo extends Component {
             .catch(error => {
                 console.log(error)
             })
+            .finally(() => {
+                this.setState({
+                    loading: false
+                });
+            });
 
     }
     handleToggleSelectAll = () => {
@@ -171,6 +203,9 @@ class ToDo extends Component {
         });
     }
     componentDidMount() {
+        this.setState({
+            loading: true
+        });
         fetch("http://localhost:3001/task")
             .then(res => res.json())
             .then(data => {
@@ -184,11 +219,25 @@ class ToDo extends Component {
             .catch(error => {
                 console.log('error', error);
             })
+            .finally(() => {
+                this.setState({
+                    loading: false
+                });
+            });
 
     }
     render() {
-        const { removeTasks, isAllChecked, showModal, editTask, openTaskModal } = this.state;
-        const tasks = this.state.tasks.map((task, index) => {
+        const {
+            removeTasks,
+            isAllChecked,
+            showModal,
+            editTask,
+            openTaskModal,
+            tasks,
+            loading
+        } = this.state;
+        
+        const Tasks = tasks.map((task, index) => {
             return (
                 <Col
                     key={task._id}
@@ -224,19 +273,19 @@ class ToDo extends Component {
                         </Col>
                     </Row>
                     <Row className="justify-content-center mt-3">
-                        {!tasks.length && <div>Tasks is Empty</div>}
-                        {tasks}
+                        {!Tasks.length && <div>Tasks is Empty</div>}
+                        {Tasks}
                     </Row>
                     <Row className="mt-5">
                         <Col>
-                            {!!tasks.length && <Button
+                            {!!Tasks.length && <Button
                                 variant="danger"
                                 onClick={this.handleToggleModal}
                                 disabled={!!!removeTasks.size}
                             >
                                 Remove Selected
                         </Button>}
-                            {!!tasks.length && <Button
+                            {!!Tasks.length && <Button
                                 className="ml-3"
                                 variant="primary"
                                 onClick={this.handleToggleSelectAll}
@@ -257,6 +306,7 @@ class ToDo extends Component {
                     onHide={this.handleToggleTaskModal}
                     onSubmit={this.handleCatchValue}
                 />}
+                { loading && <Preloader/>}
             </>
         )
     }

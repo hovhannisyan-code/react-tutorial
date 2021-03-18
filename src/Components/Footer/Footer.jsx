@@ -1,8 +1,8 @@
 const Footer = () => {
     return (
-        <div class="navbar navbar-inverse navbar-fixed-bottom">
-          <div class="container">
-            <p class="navbar-text">© localhost</p>
+        <div className="navbar navbar-inverse navbar-fixed-bottom">
+          <div className="container">
+            <p className="navbar-text">© localhost</p>
           </div>
         </div>
     )

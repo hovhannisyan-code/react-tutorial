@@ -25,7 +25,7 @@ class TaskModal extends React.PureComponent {
         })
     }
     handleSubmit = ({ key, type }) => {
-        const { onSubmit, onHide } = this.props;
+        const { onSubmit } = this.props;
         const { title, description } = this.state;
         if (
             (type === 'keypress' && key !== 'Enter') ||
@@ -33,7 +33,6 @@ class TaskModal extends React.PureComponent {
         ) return;
 
         onSubmit(this.state);
-        onHide();
     }
     handleSetDate = (date) => {
         this.setState({
@@ -42,6 +41,9 @@ class TaskModal extends React.PureComponent {
     }
     componentDidMount() {
         this.inputRef.current.focus();
+    }
+    componentWillUnmount() {
+        console.log('componentWillUnmount')
     }
     render() {
         const { title, description, date, edit } = this.state;
