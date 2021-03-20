@@ -6,6 +6,7 @@ import { Button } from 'react-bootstrap';
 import DateYMD from '../../helpers/date';
 import Confirm from '../../Modals/Confirm';
 import TaskModal from '../../Modals/TaskModal';
+import Preloader from "../../Loader/Preloader";
 
 class SingleTask extends React.Component {
     constructor(props) {
@@ -13,7 +14,8 @@ class SingleTask extends React.Component {
         this.state = {
             singleTask: null,
             showModal: false,
-            openTaskModal: false
+            openTaskModal: false,
+            loading: false
         }
     }
     handleToggleModal = () => {
@@ -24,6 +26,9 @@ class SingleTask extends React.Component {
     handleDelete = () => {
         const { _id } = this.state.singleTask;
         const { history } = this.props;
+        this.setState({
+            loading: true
+        });
         fetch(`http://localhost:3001/task/${_id}`, {
             method: "DELETE",
             headers: {
@@ -35,6 +40,9 @@ class SingleTask extends React.Component {
                 if (data.error) {
                     throw data.error;
                 }
+                this.setState({
+                    loading: false
+                });
                 history.push("/");
             })
             .catch(error => {
@@ -50,6 +58,9 @@ class SingleTask extends React.Component {
     handleCatchValue = (taskdata) => {
         if (!taskdata.title || !taskdata.description) return;
         taskdata.date = DateYMD(taskdata.date);
+        this.setState({
+            loading: true
+        });
         fetch(`http://localhost:3001/task/${taskdata._id}`, {
             method: "PUT",
             body: JSON.stringify(taskdata),
@@ -62,17 +73,26 @@ class SingleTask extends React.Component {
                 if (data.error) {
                     throw data.error;
                 }
-                console.log(data)
+                this.handleToggleTaskModal();
                 this.setState({
-                    singleTask:data
-                })
+                    singleTask: data
+                });
+
             })
             .catch(error => {
                 console.log(error)
             })
+            .finally(() => {
+                this.setState({
+                    loading: false
+                });
+            });
     }
     componentDidMount() {
         const { id } = this.props.match.params;
+        this.setState({
+            loading: true
+        });
         fetch(`http://localhost:3001/task/${id}`)
             .then(res => res.json())
             .then(data => {
@@ -80,23 +100,30 @@ class SingleTask extends React.Component {
                     throw data.error;
                 }
                 this.setState({
-                    singleTask: data
+                    singleTask: data,
+                    loading: false
                 })
             })
             .catch(error => {
+                const { history } = this.props;
+                history.push("/404");
                 console.log('error', error);
             })
+            .finally(() => {
+                this.setState({
+                    loading: false
+                });
+            });
     }
     render() {
-        const { 
-            singleTask, 
-            showModal, 
-            openTaskModal 
+        const {
+            singleTask,
+            showModal,
+            openTaskModal,
+            loading
         } = this.state;
-        if (!singleTask) {
-            return <div>
-                Loading...
-                    </div>
+        if (!singleTask) { // todo check error from server
+            return  <Preloader />
         }
         return (
             <div className={styles.taskpage}>
@@ -129,6 +156,7 @@ class SingleTask extends React.Component {
                     onHide={this.handleToggleTaskModal}
                     onSubmit={this.handleCatchValue}
                 />}
+                {loading && <Preloader />}
             </div>
         )
     }

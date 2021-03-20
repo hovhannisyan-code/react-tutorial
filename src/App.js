@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import Navbar from './Components/Navbar/Navbar';
 import Footer from './Components/Footer/Footer';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import './App.css';
 /**
  * Pages
@@ -30,7 +30,7 @@ const pages = [
     component: SingleTask
   },
   {
-    path: "/*",
+    path: "/404",
     component: NotFound
   }
 ];
@@ -54,6 +54,7 @@ class App extends Component {
           <Navbar />
           <Switch>
             {pagesList}
+            <Redirect to="/404" />
           </Switch>
           <Footer />
         </div>

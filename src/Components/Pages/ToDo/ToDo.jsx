@@ -42,7 +42,7 @@ class ToDo extends Component {
                     if (data.error) {
                         throw data.error;
                     }
-                    
+
                     const index = tasks.findIndex(task => task._id === data._id);
                     tasks[index] = data;
                     this.handleToggleTaskModal();
@@ -64,7 +64,7 @@ class ToDo extends Component {
             this.setState({
                 loading: true
             });
-            fetch("http://localhost:3001/t", {
+            fetch("http://localhost:3001/task", {
                 method: 'POST',
                 body: JSON.stringify(taskdata),
                 headers: {
@@ -236,7 +236,7 @@ class ToDo extends Component {
             tasks,
             loading
         } = this.state;
-        
+
         const Tasks = tasks.map((task, index) => {
             return (
                 <Col
@@ -259,54 +259,56 @@ class ToDo extends Component {
         });
         return (
             <>
-                <Container className="todo-list">
-                    <h1 className="welcome">To do list</h1>
-                    <Row className="justify-content-center my-5">
-                        <Col>
-                            <Button
-                                className="ml-3"
-                                variant="primary"
-                                onClick={this.handleToggleTaskModal}
-                            >
-                                Add Task
-                            </Button>
-                        </Col>
-                    </Row>
-                    <Row className="justify-content-center mt-3">
-                        {!Tasks.length && <div>Tasks is Empty</div>}
-                        {Tasks}
-                    </Row>
-                    <Row className="mt-5">
-                        <Col>
-                            {!!Tasks.length && <Button
-                                variant="danger"
-                                onClick={this.handleToggleModal}
-                                disabled={!!!removeTasks.size}
-                            >
-                                Remove Selected
-                        </Button>}
-                            {!!Tasks.length && <Button
-                                className="ml-3"
-                                variant="primary"
-                                onClick={this.handleToggleSelectAll}
-                            >
-                                {isAllChecked ? 'Remove All Selected' : 'Select All'}
+                <div>
+                    <Container className="todo-list">
+                        <h1 className="welcome">To do list</h1>
+                        <Row className="justify-content-center my-5">
+                            <Col>
+                                <Button
+                                    className="ml-3"
+                                    variant="primary"
+                                    onClick={this.handleToggleTaskModal}
+                                >
+                                    Add Task
+                                </Button>
+                            </Col>
+                        </Row>
+                        <Row className="justify-content-center mt-3">
+                            {!Tasks.length && <div>Tasks is Empty</div>}
+                            {Tasks}
+                        </Row>
+                        <Row className="mt-5">
+                            <Col>
+                                {!!Tasks.length && <Button
+                                    variant="danger"
+                                    onClick={this.handleToggleModal}
+                                    disabled={!!!removeTasks.size}
+                                >
+                                    Remove Selected
                             </Button>}
-                        </Col>
-                    </Row>
-                </Container>
-                {showModal && <Confirm
-                    handleClose={this.handleToggleModal}
-                    onSubmit={this.removeSelectedTasks}
-                    modalTitle={`Modal heading`}
-                    modalBody={`Do you want to delete ${removeTasks.size} tasks`}
-                />}
-                {openTaskModal && <TaskModal
-                    editTask={editTask}
-                    onHide={this.handleToggleTaskModal}
-                    onSubmit={this.handleCatchValue}
-                />}
-                { loading && <Preloader/>}
+                                {!!Tasks.length && <Button
+                                    className="ml-3"
+                                    variant="primary"
+                                    onClick={this.handleToggleSelectAll}
+                                >
+                                    {isAllChecked ? 'Remove All Selected' : 'Select All'}
+                                </Button>}
+                            </Col>
+                        </Row>
+                    </Container>
+                    {showModal && <Confirm
+                        handleClose={this.handleToggleModal}
+                        onSubmit={this.removeSelectedTasks}
+                        modalTitle={`Modal heading`}
+                        modalBody={`Do you want to delete ${removeTasks.size} tasks`}
+                    />}
+                    {openTaskModal && <TaskModal
+                        editTask={editTask}
+                        onHide={this.handleToggleTaskModal}
+                        onSubmit={this.handleCatchValue}
+                    />}
+                    {loading && <Preloader />}
+                </div>
             </>
         )
     }
