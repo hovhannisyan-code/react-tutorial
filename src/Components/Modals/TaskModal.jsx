@@ -16,7 +16,6 @@ class TaskModal extends React.PureComponent {
             date: props.editTask ? new Date(props.editTask.date) : new Date()
         }
         this.inputRef = React.createRef();
-        console.log('props',props)
     }
 
     handleChange = (e) => {

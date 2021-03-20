@@ -7,7 +7,7 @@ class Contact extends React.Component {
             <Container>
                 <h1>Contact Us</h1>
                 <Row>
-                    <Col>
+                    <Col xs={5} className="m-auto">
                         <ContactForm />
                     </Col>
                 </Row>
