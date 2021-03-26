@@ -109,7 +109,7 @@ class ContactForm extends React.Component {
         this.setState({
             [name]: {
                 value,
-                valid,
+                valid:!!!error,
                 error
             },
             formValid: formValid(this.state)

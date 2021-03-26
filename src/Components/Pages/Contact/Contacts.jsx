@@ -1,5 +1,5 @@
 import React from 'react';
-import ContactForm from '../../Form/Form'
+import ContactForm from '../../Form/FormHook'
 import { Container, Row, Col } from 'react-bootstrap';
 class Contact extends React.Component {
     render() {

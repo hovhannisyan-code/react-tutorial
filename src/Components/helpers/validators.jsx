@@ -22,7 +22,7 @@ export function emailValidation(email) {
     return 'Please enter a valid email';
 }
 
-export function formValid(formData) {
+export function formValidate(formData) {
     for (let key in formData) {
         if (typeof formData[key] === "object" && !formData[key].valid)
             return false;
