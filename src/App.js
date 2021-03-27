@@ -12,6 +12,10 @@ import Contact from './Components/Pages/Contact/Contacts';
 import NotFound from './Components/Pages/404/404';
 import SingleTask from './Components/Pages/SingleTask/SingleTask';
 
+/**
+ * Context
+ */
+import ContactContextProvider from './Context/ContactPageContext';
 const pages = [
   {
     path: "/",
@@ -39,6 +43,22 @@ class App extends Component {
 
   render() {
     const pagesList = pages.map((item, index) => {
+      if (item.path === '/contact') {
+        return (
+          <Route
+            key={index}
+            path={item.path}
+            exact
+            render={(props) => {
+              return (
+                <ContactContextProvider>
+                  {<item.component {...props} />}
+                </ContactContextProvider>
+              )
+            }}
+          />
+        )
+      }
       return (
         <Route
           key={index}
