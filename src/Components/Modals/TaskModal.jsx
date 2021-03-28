@@ -84,7 +84,7 @@ class TaskModal extends React.PureComponent {
                         placeholder="Description"
                         value={description}
                     />
-                    <DatePicker selected={date} onChange={date => this.handleSetDate(date)} />
+                    {/* <DatePicker selected={date} onChange={date => this.handleSetDate(date)} /> */}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button onClick={onHide}>Close</Button>

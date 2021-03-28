@@ -10,7 +10,7 @@ import ToDo from './Components/Pages/ToDo/ToDo';
 import About from './Components/Pages/About/About';
 import Contact from './Components/Pages/Contact/Contacts';
 import NotFound from './Components/Pages/404/404';
-import SingleTask from './Components/Pages/SingleTask/SingleTask';
+import SingleTaskReducer from './Components/Pages/SingleTask/SingleTaskReducer';
 
 /**
  * Context
@@ -31,7 +31,7 @@ const pages = [
   },
   {
     path: "/task/:id",
-    component: SingleTask
+    component: SingleTaskReducer
   },
   {
     path: "/404",
