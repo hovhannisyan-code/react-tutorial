@@ -16,6 +16,10 @@ import SingleTaskReducer from './Components/Pages/SingleTask/SingleTaskReducer';
  * Context
  */
 import ContactContextProvider from './Context/ContactPageContext';
+/**
+ * Redux
+ */
+import CounterReduxWithState from './Components/Counter/CounterRedux';
 const pages = [
   {
     path: "/",
@@ -32,6 +36,10 @@ const pages = [
   {
     path: "/task/:id",
     component: SingleTaskReducer
+  },
+  {
+    path: "/counter",
+    component: CounterReduxWithState
   },
   {
     path: "/404",

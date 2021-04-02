@@ -1,7 +1,7 @@
 import React from "react";
 import { Form, Button, Modal } from 'react-bootstrap';
 import Proptypes from 'prop-types';
-import DatePicker from "react-datepicker";
+// import DatePicker from "react-datepicker";
 
 class TaskModal extends React.PureComponent {
     constructor(props) {
