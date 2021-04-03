@@ -9,13 +9,6 @@ import Preloader from "../../Loader/Preloader";
 import {connect} from 'react-redux';
 import actionTypes from '../../../Redux/actionTypes';
 class ToDo extends Component {
-    constructor(props) {
-        super(props);
-        //const tasks = [];
-        this.state = {
-            showModal: false,
-        }
-    }
 
     handleCatchValue = (taskdata) => {
         if (!taskdata.title || !taskdata.description) return;
@@ -121,11 +114,7 @@ class ToDo extends Component {
 
     }
     
-    handleToggleModal = () => {
-        this.setState({
-            showModal: !this.state.showModal
-        })
-    }
+    
     componentDidMount() {
         this.props.toggleLoading(true);
         fetch("http://localhost:3001/task")
@@ -144,11 +133,7 @@ class ToDo extends Component {
             });
 
     }
-    render() {
-        console.log("Todo", this.props);
-        const {
-            showModal
-        } = this.state;
+    render() {        
         const {
             //state
             tasks,
@@ -157,10 +142,12 @@ class ToDo extends Component {
             removeTasks,
             isAllChecked,
             openTaskModal,
+            isConfirmModal,
             //dispatch
             toggleSetRemoveIds,
             toggleCheckAllTasks,
-            toggleOpenTaskModal
+            toggleOpenTaskModal,
+            toggleConfirmModal
         } = this.props
         const Tasks = tasks.map((task, index) => {
             return (
@@ -206,7 +193,7 @@ class ToDo extends Component {
                             <Col>
                                 {!!Tasks.length && <Button
                                     variant="danger"
-                                    onClick={this.handleToggleModal}
+                                    onClick={toggleConfirmModal}
                                     disabled={!!!removeTasks.size}
                                 >
                                     Remove Selected
@@ -221,8 +208,8 @@ class ToDo extends Component {
                             </Col>
                         </Row>
                     </Container>
-                    {showModal && <Confirm
-                        handleClose={this.handleToggleModal}
+                    {isConfirmModal && <Confirm
+                        handleClose={toggleConfirmModal}
                         onSubmit={this.removeSelectedTasks}
                         modalTitle={`Modal heading`}
                         modalBody={`Do you want to delete ${removeTasks.size} tasks`}
@@ -245,7 +232,8 @@ const mapStateToProps = (state) => {
         removeTasks,
         editTask,
         openTaskModal,
-        isAllChecked
+        isAllChecked,
+        isConfirmModal
     } = state.todoState;
     return {
         tasks,
@@ -253,7 +241,8 @@ const mapStateToProps = (state) => {
         removeTasks,
         editTask,
         openTaskModal,
-        isAllChecked
+        isAllChecked,
+        isConfirmModal
     }
 } 
 const mapDispatchToProps = (dispatch) => {
@@ -284,6 +273,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         toggleOpenTaskModal: (task = null) => {
             dispatch({ type: actionTypes.TOGGLE_OPEN_ADD_TASK_MODAL, task });
+        },
+        toggleConfirmModal: () => {
+            dispatch({ type: actionTypes.TOGGLE_CONFIRM_MODAL });
         }
     }
 }

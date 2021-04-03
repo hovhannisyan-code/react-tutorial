@@ -57,6 +57,7 @@ class SingleTask extends React.Component {
     }
     handleCatchValue = (taskdata) => {
         if (!taskdata.title || !taskdata.description) return;
+        console.log('taskdata',taskdata)
         taskdata.date = DateYMD(taskdata.date);
         this.setState({
             loading: true
@@ -73,11 +74,11 @@ class SingleTask extends React.Component {
                 if (data.error) {
                     throw data.error;
                 }
-                this.handleToggleTaskModal();
+                
                 this.setState({
                     singleTask: data
                 });
-
+                this.handleToggleTaskModal();
             })
             .catch(error => {
                 console.log(error)

@@ -1,11 +1,12 @@
 import React from "react";
 import { Form, Button, Modal } from 'react-bootstrap';
 import Proptypes from 'prop-types';
-// import DatePicker from "react-datepicker";
+import DatePicker from "react-datepicker";
 
 class TaskModal extends React.PureComponent {
     constructor(props) {
         super(props);
+        console.log(props.editTask.date)
         const edit = props.editTask ? true : false;
         this.state = {
             _id: '',
@@ -43,11 +44,10 @@ class TaskModal extends React.PureComponent {
         this.inputRef.current.focus();
     }
     componentWillUnmount() {
-        console.log('componentWillUnmount')
     }
     render() {
-        const { title, description, date, edit } = this.state;
-        console.log('date',date)
+        const { title, description, edit } = this.state;
+        const date = edit ? new Date(this.state.date) : this.state.date;
         const { onHide } = this.props;
         return (
             <Modal
@@ -84,7 +84,7 @@ class TaskModal extends React.PureComponent {
                         placeholder="Description"
                         value={description}
                     />
-                    {/* <DatePicker selected={date} onChange={date => this.handleSetDate(date)} /> */}
+                    <DatePicker selected={date} onChange={date => this.handleSetDate(date)} />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button onClick={onHide}>Close</Button>
