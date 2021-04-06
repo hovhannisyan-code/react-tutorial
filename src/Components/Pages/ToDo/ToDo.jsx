@@ -5,65 +5,26 @@ import DateYMD from '../../helpers/date';
 import Confirm from '../../Modals/Confirm';
 import TaskModal from '../../Modals/TaskModal';
 import Preloader from "../../Loader/Preloader";
-
-import {connect} from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faList } from '@fortawesome/free-solid-svg-icons';
+import { connect } from 'react-redux';
 import actionTypes from '../../../Redux/actionTypes';
+import { Link } from 'react-router-dom';
+import {
+    setTasksThunk,
+    addOrEditTaskThunk,
+    deleteOneTaskThunk,
+    editTaskThunk,
+    removeAnyTasksThunk
+} from '../../../Redux/actions';
+
 class ToDo extends Component {
 
     handleCatchValue = (taskdata) => {
         if (!taskdata.title || !taskdata.description) return;
         taskdata.date = DateYMD(taskdata.date);
-        const {toggleOpenTaskModal} = this.props;
-        if (taskdata.edit) {
-            this.props.toggleLoading(true);
-            fetch(`http://localhost:3001/task/${taskdata._id}`, {
-                method: "PUT",
-                body: JSON.stringify(taskdata),
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.error) {
-                        throw data.error;
-                    }
-
-                    this.props.editTaskF(data);
-                    toggleOpenTaskModal();
-                })
-                .catch(error => {
-                    console.log(error)
-                    // todo notify
-                })
-                .finally(() => {
-                    this.props.toggleLoading(false);
-                });
-
-        } else {
-            this.props.toggleLoading(true);
-            fetch("http://localhost:3001/task", {
-                method: 'POST',
-                body: JSON.stringify(taskdata),
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.error) {
-                        throw data.error;
-                    }
-                    this.props.addTask(data);
-                    toggleOpenTaskModal();
-                })
-                .catch(error => {
-                    console.log('catch Error', error);
-                })
-                .finally(() => {
-                    this.props.toggleLoading(false);
-                });
-        }
+        this.props.addOrEditTask(taskdata);
+        
     }
     handleDelete = (id) => {
         this.props.toggleLoading(true);
@@ -88,7 +49,7 @@ class ToDo extends Component {
             });
 
     }
-    
+
     removeSelectedTasks = () => {
         this.props.toggleLoading(true);
         fetch("http://localhost:3001/task", {
@@ -113,27 +74,12 @@ class ToDo extends Component {
             });
 
     }
-    
-    
-    componentDidMount() {
-        this.props.toggleLoading(true);
-        fetch("http://localhost:3001/task")
-            .then(res => res.json())
-            .then(data => {
-                if (data.error) {
-                    throw data.error;
-                }
-                this.props.setTasks(data);
-            })
-            .catch(error => {
-                console.log('error', error);
-            })
-            .finally(() => {
-                this.props.toggleLoading(false);
-            });
 
+
+    componentDidMount() {
+        this.props.setTasks();
     }
-    render() {        
+    render() {
         const {
             //state
             tasks,
@@ -149,6 +95,7 @@ class ToDo extends Component {
             toggleOpenTaskModal,
             toggleConfirmModal
         } = this.props
+        console.log(removeTasks)
         const Tasks = tasks.map((task, index) => {
             return (
                 <Col
@@ -156,7 +103,8 @@ class ToDo extends Component {
                     xs={12}
                     sm={6}
                     md={4}
-                    lg={3}
+                    lg={6}
+                    xl={4}
                     className="d-flex justify-content-center mt-3 align-items-center">
                     <Task
                         task={task}
@@ -169,11 +117,37 @@ class ToDo extends Component {
                 </Col>
             )
         });
+        let TasksList = tasks.reverse().map((task, index) => {
+            // if (index === 5) return;
+            return (
+                <li key={task._id} class="list-group-item">
+                    <Link to={`/task/${task._id}`}>{task.title}</Link>
+                </li>
+            )
+        });
         return (
             <>
-                <div>
+                <Col xl={3} lg={4} sm={3}>
+                    <div class="card bg- mb-3">
+                        <div class="card-header bg-dark text-white text-uppercase"><FontAwesomeIcon icon={faList} className="mr-1" />Latest 5 tasks</div>
+                        <ul class="list-group category_block">
+                            {TasksList}
+                        </ul>
+                    </div>
+                    <div class="card bg- mb-3">
+                        <div class="card-header bg-dark text-white text-uppercase">Last Task</div>
+                        <div class="card-body">
+                            <img class="img-fluid" src="https://dummyimage.com/600x400/55595c/fff" alt="Task" />
+                            <h5 class="card-title">Product title</h5>
+                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                            <p class="bloc_left_price">99.00 $</p>
+                        </div>
+                    </div>
+                </Col>
+                <Col xl={9} sm={9} md={9} lg={8}>
+
+
                     <Container className="todo-list">
-                        <h1 className="welcome">To do list</h1>
                         <Row className="justify-content-center my-5">
                             <Col>
                                 <Button
@@ -182,7 +156,7 @@ class ToDo extends Component {
                                     onClick={toggleOpenTaskModal}
                                 >
                                     Add Task
-                                </Button>
+                                    </Button>
                             </Col>
                         </Row>
                         <Row className="justify-content-center mt-3">
@@ -197,7 +171,7 @@ class ToDo extends Component {
                                     disabled={!!!removeTasks.size}
                                 >
                                     Remove Selected
-                            </Button>}
+                                </Button>}
                                 {!!Tasks.length && <Button
                                     className="ml-3"
                                     variant="primary"
@@ -208,24 +182,25 @@ class ToDo extends Component {
                             </Col>
                         </Row>
                     </Container>
-                    {isConfirmModal && <Confirm
-                        handleClose={toggleConfirmModal}
-                        onSubmit={this.removeSelectedTasks}
-                        modalTitle={`Modal heading`}
-                        modalBody={`Do you want to delete ${removeTasks.size} tasks`}
-                    />}
-                    {openTaskModal && <TaskModal
-                        editTask={editTask}
-                        onHide={toggleOpenTaskModal}
-                        onSubmit={this.handleCatchValue}
-                    />}
-                    {loading && <Preloader />}
-                </div>
+                </Col>
+                {isConfirmModal && <Confirm
+                    handleClose={toggleConfirmModal}
+                    onSubmit={this.removeSelectedTasks}
+                    modalTitle={`Modal heading`}
+                    modalBody={`Do you want to delete ${removeTasks.size} tasks`}
+                />}
+                {openTaskModal && <TaskModal
+                    editTask={editTask}
+                    onHide={toggleOpenTaskModal}
+                    onSubmit={this.handleCatchValue}
+                />}
+                {loading && <Preloader />}
             </>
         )
     }
 }
 const mapStateToProps = (state) => {
+    console.log(state)
     const {
         tasks,
         loading,
@@ -244,24 +219,20 @@ const mapStateToProps = (state) => {
         isAllChecked,
         isConfirmModal
     }
-} 
+}
 const mapDispatchToProps = (dispatch) => {
     return {
-        setTasks: (data) => {
-            dispatch({ type: actionTypes.SET_TASKS, data });
-        },
+        setTasks: () => dispatch(setTasksThunk()),
+        addOrEditTask: (data) => dispatch(addOrEditTaskThunk(data)),
+        
         toggleLoading: (isLoading) => {
             dispatch({ type: actionTypes.TOGGLE_LOADING, isLoading });
         },
         deleteTask: (_id) => {
             dispatch({ type: actionTypes.DELETE_ONE_TASK, _id });
         },
-        addTask: (data) => {
-            dispatch({ type: actionTypes.ADD_TASK, data });
-        },
-        editTaskF: (data) => {
-            dispatch({ type: actionTypes.EDIT_TASK, data });
-        },
+        
+        
         toggleSetRemoveIds: (_id) => {
             dispatch({ type: actionTypes.TOGGLE_CHECK_TASK, _id });
         },
@@ -279,5 +250,5 @@ const mapDispatchToProps = (dispatch) => {
         }
     }
 }
-const ToDoProvider = connect(mapStateToProps,mapDispatchToProps)(ToDo)
+const ToDoProvider = connect(mapStateToProps, mapDispatchToProps)(ToDo)
 export default ToDoProvider;

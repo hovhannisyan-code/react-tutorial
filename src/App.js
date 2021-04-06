@@ -2,6 +2,7 @@ import { Component } from 'react';
 import Navbar from './Components/Navbar/Navbar';
 import Footer from './Components/Footer/Footer';
 import { Route, Switch, Redirect } from 'react-router-dom';
+import { Container, Row } from 'react-bootstrap';
 import './App.css';
 /**
  * Pages
@@ -80,10 +81,21 @@ class App extends Component {
       <div className="App">
         <div className="menu">
           <Navbar />
-          <Switch>
-            {pagesList}
-            <Redirect to="/404" />
-          </Switch>
+          <section class="jumbotron text-center">
+            <div class="container">
+                <h1 class="jumbotron-heading">The Best Free To-Do App</h1>
+                <p class="lead text-muted mb-0">Le Lorem Ipsum est simplement du faux texte employé dans la composition et la mise en page avant impression. Le Lorem Ipsum est le faux texte standard de l'imprimerie depuis les années 1500, quand un peintre anonyme assembla ensemble des morceaux de texte pour réaliser un livre spécimen de polices de texte...</p>
+            </div>
+        </section>
+          <Container className="main-container">
+            <Row>
+                <Switch>
+                  {pagesList}
+                  <Redirect to="/404" />
+                </Switch>
+            </Row>
+          </Container>
+
           <Footer />
         </div>
       </div>
