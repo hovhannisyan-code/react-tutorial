@@ -60,6 +60,7 @@ export const addOrEditTaskThunk = (taskdata) => (dispatch) => {
                     throw data.error;
                 }
                 dispatch({ type: actionTypes.ADD_TASK, data });
+                dispatch({ type: actionTypes.TOGGLE_OPEN_ADD_TASK_MODAL, task: null });
             })
             .catch(error => {
                 console.log('catch Error', error);
@@ -72,14 +73,48 @@ export const addOrEditTaskThunk = (taskdata) => (dispatch) => {
 }
 
 export const deleteOneTaskThunk = (_id) => (dispatch) => {
-
+    dispatch({ type: actionTypes.TOGGLE_LOADING, isLoading: true });
+    fetch(`http://localhost:3001/task/${_id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.error) {
+                throw data.error;
+            }
+            dispatch({ type: actionTypes.DELETE_ONE_TASK, _id: _id })
+        })
+        .catch(error => {
+            console.log(error)
+        })
+        .finally(() => {
+            dispatch({ type: actionTypes.TOGGLE_LOADING, isLoading: false });
+        });
 }
 
-
-export const editTaskThunk = (editTask) => (dispatch) => {
-
-}
-
-export const removeAnyTasksThunk = (editTask) => (dispatch) => {
-
+export const removeAnyTasksThunk = (removeTasks) => (dispatch) => {
+    dispatch({ type: actionTypes.TOGGLE_LOADING, isLoading: true });
+    fetch("http://localhost:3001/task", {
+        method: 'PATCH',
+        body: JSON.stringify({ tasks: Array.from(removeTasks) }),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.error) {
+                throw data.error;
+            }
+            dispatch({ type: actionTypes.DELETE_CHECKED_TASKS});
+        })
+        .catch(error => {
+            console.log(error)
+        })
+        .finally(() => {
+            dispatch({ type: actionTypes.TOGGLE_LOADING, isLoading: false });
+        });
 }

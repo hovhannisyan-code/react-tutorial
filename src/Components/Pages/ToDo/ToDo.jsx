@@ -14,7 +14,6 @@ import {
     setTasksThunk,
     addOrEditTaskThunk,
     deleteOneTaskThunk,
-    editTaskThunk,
     removeAnyTasksThunk
 } from '../../../Redux/actions';
 
@@ -27,55 +26,12 @@ class ToDo extends Component {
         
     }
     handleDelete = (id) => {
-        this.props.toggleLoading(true);
-        fetch(`http://localhost:3001/task/${id}`, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.error) {
-                    throw data.error;
-                }
-                this.props.deleteTask(id);
-            })
-            .catch(error => {
-                console.log(error)
-            })
-            .finally(() => {
-                this.props.toggleLoading(false);
-            });
-
+        this.props.deleteTask(id);
     }
 
     removeSelectedTasks = () => {
-        this.props.toggleLoading(true);
-        fetch("http://localhost:3001/task", {
-            method: 'PATCH',
-            body: JSON.stringify({ tasks: Array.from(this.props.removeTasks) }),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.error) {
-                    throw data.error;
-                }
-                this.props.deleteCheckedTasks();
-            })
-            .catch(error => {
-                console.log(error)
-            })
-            .finally(() => {
-                this.props.toggleLoading(false);
-            });
-
+        this.props.deleteCheckedTasks(this.props.removeTasks);
     }
-
-
     componentDidMount() {
         this.props.setTasks();
     }
@@ -224,21 +180,16 @@ const mapDispatchToProps = (dispatch) => {
     return {
         setTasks: () => dispatch(setTasksThunk()),
         addOrEditTask: (data) => dispatch(addOrEditTaskThunk(data)),
-        
+        deleteCheckedTasks: (removeTasks) => dispatch(removeAnyTasksThunk(removeTasks)),
+        deleteTask: (_id) => dispatch(deleteOneTaskThunk(_id)),
+
         toggleLoading: (isLoading) => {
             dispatch({ type: actionTypes.TOGGLE_LOADING, isLoading });
-        },
-        deleteTask: (_id) => {
-            dispatch({ type: actionTypes.DELETE_ONE_TASK, _id });
-        },
-        
-        
+        },   
         toggleSetRemoveIds: (_id) => {
             dispatch({ type: actionTypes.TOGGLE_CHECK_TASK, _id });
         },
-        deleteCheckedTasks: () => {
-            dispatch({ type: actionTypes.DELETE_CHECKED_TASKS });
-        },
+        
         toggleCheckAllTasks: () => {
             dispatch({ type: actionTypes.TOGGLE_CHECK_ALL_TASKS });
         },
