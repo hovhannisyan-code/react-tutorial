@@ -11,7 +11,7 @@ import actionTypes from '../../Redux/actionTypes';
 const FormHook = (props) => {
 
 
-    const handleChange = (e) => { // I can validate in store js but gesh er 😄 
+    const handleChange = (e) => { // I can validate in contactReducer js but gesh er 😄 
         const { name, value } = e.target;
         let error = null;
         const maxLength25 = maxLength(25);

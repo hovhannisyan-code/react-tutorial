@@ -93,6 +93,7 @@ const reducer = (state = initialState, action) => {
         case actionTypes.TOGGLE_OPEN_ADD_TASK_MODAL: {
             const { task } = action;
             const editTask = task && task._id ? task : false;
+            console.log(editTask)
             return {
                 ...state,
                 editTask: editTask,

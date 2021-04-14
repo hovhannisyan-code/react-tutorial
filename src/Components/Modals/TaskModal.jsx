@@ -6,7 +6,6 @@ import DatePicker from "react-datepicker";
 class TaskModal extends React.PureComponent {
     constructor(props) {
         super(props);
-        console.log(props.editTask.date)
         const edit = props.editTask ? true : false;
         this.state = {
             _id: '',
@@ -46,8 +45,7 @@ class TaskModal extends React.PureComponent {
     componentWillUnmount() {
     }
     render() {
-        const { title, description, edit } = this.state;
-        const date = edit ? new Date(this.state.date) : this.state.date;
+        const { title, description, edit, date } = this.state;
         const { onHide } = this.props;
         return (
             <Modal
@@ -84,7 +82,7 @@ class TaskModal extends React.PureComponent {
                         placeholder="Description"
                         value={description}
                     />
-                    <DatePicker selected={date} onChange={date => this.handleSetDate(date)} />
+                    <DatePicker selected={new Date(date)} onChange={date => this.handleSetDate(date)} />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button onClick={onHide}>Close</Button>

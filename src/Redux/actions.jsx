@@ -109,7 +109,7 @@ export const removeAnyTasksThunk = (removeTasks) => (dispatch) => {
             if (data.error) {
                 throw data.error;
             }
-            dispatch({ type: actionTypes.DELETE_CHECKED_TASKS});
+            dispatch({ type: actionTypes.DELETE_CHECKED_TASKS });
         })
         .catch(error => {
             console.log(error)
@@ -117,4 +117,24 @@ export const removeAnyTasksThunk = (removeTasks) => (dispatch) => {
         .finally(() => {
             dispatch({ type: actionTypes.TOGGLE_LOADING, isLoading: false });
         });
+}
+
+export const deleteSTThunk = (_id) => (dispatch) => {
+    fetch(`http://localhost:3001/task/${_id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.error) {
+                throw data.error;
+            }
+            dispatch({ type: "loading", loading: false });
+            history.push("/");
+        })
+        .catch(error => {
+            console.log(error)
+        })
 }
