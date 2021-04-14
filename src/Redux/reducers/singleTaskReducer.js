@@ -9,7 +9,7 @@ const initialState = {
 
 const reducer = (state = initialState, action) => {
     switch (action.type) {
-        case "showModal":
+        case actionTypes.TOGGLE_ST_CONFIRM_MODAL:
             return {
                 ...state,
                 showModal: !state.showModal
@@ -24,7 +24,7 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 loading: action.loading
             }
-        case "setSingleTask":
+        case actionTypes.SET_ST:
             return {
                 ...state,
                 singleTask: action.task

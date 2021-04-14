@@ -2,7 +2,6 @@ import { Form, Button } from "react-bootstrap";
 import Preloader from '../Loader/Preloader';
 import styles from './form.module.css';
 import Notifications, { notify } from 'react-notify-toast';
-import { isRequired, maxLength, minLength, emailValidation } from '../helpers/validators';
 /**
  * Redux
  */
@@ -11,41 +10,18 @@ import actionTypes from '../../Redux/actionTypes';
 const FormHook = (props) => {
 
 
-    const handleChange = (e) => { // I can validate in contactReducer js but gesh er 😄 
-        const { name, value } = e.target;
-        let error = null;
-        const maxLength25 = maxLength(25);
-        const minLength3 = minLength(3);
-
-        switch (name) {
-            case "name":
-            case "message":
-                error = isRequired(value) ||
-                    minLength3(value) ||
-                    maxLength25(value);
-                break;
-            case "email":
-                error = isRequired(value) ||
-                    emailValidation(value)
-                break;
-            default: ;
-        }
-        let data = {
-            name,
-            value,
-            error
-        }
-        props.changeInput(data);
+    const handleChange = (e) => { 
+        
+        props.changeInput(e.target);
+        
+        
+        
     }
     const handleAddContactForm = (e) => {
         e.preventDefault();
         props.toggleLoading(true);
-        const { name, email, message } = props;
-        let formData = {
-            name,
-            email,
-            message
-        }
+        const { formData } = props;
+        
         const contactFormData = { ...formData };
         for (let key in formData) {
             contactFormData[key] = contactFormData[key].value
@@ -63,23 +39,7 @@ const FormHook = (props) => {
                     throw data.error;
                 }
                 notify.show('Your message has been sent successfully!', 'success');
-                props.addContactForm({
-                    name: {
-                        value: "",
-                        valid: false,
-                        error: null
-                    },
-                    email: {
-                        value: "",
-                        valid: false,
-                        error: null
-                    },
-                    message: {
-                        value: "",
-                        valid: false,
-                        error: null
-                    }
-                });
+                props.addContactForm();
             })
             .catch(error => {
                 console.log(error)
@@ -95,11 +55,10 @@ const FormHook = (props) => {
     }
     //const { name, email, message } = formData;
     const {
-        name,
-        email,
-        message,
+        formData,
         loading
     } = props;
+    const {name,email,message} = formData;
     const isValid = name.valid && email.valid && message.valid;
     console.log(props)
     return (
@@ -164,24 +123,21 @@ const FormHook = (props) => {
 }
 const mapStateToProps = (state) => {
     const {
-        name,
-        email,
-        message
+        formData,
+        loading
     } = state.contactFormState;
     return {
-        name,
-        email,
-        message
+        formData,
+        loading
     }
 }
 const mapDispatchToProps = (dispatch) => {
     return {
         changeInput: (data) => {
-            console.log(data)
             dispatch({ type: actionTypes.CHANGE_CONTACT_FORM, data });
         },
-        addContactForm: (data) => {
-            dispatch({ type: actionTypes.ADD_CONTACT_FORM, data });
+        addContactForm: () => {
+            dispatch({ type: actionTypes.ADD_CONTACT_FORM });
         },
         toggleLoading: (isLoading) => {
             dispatch({ type: actionTypes.TOGGLE_CONTACT_LOADING, isLoading });

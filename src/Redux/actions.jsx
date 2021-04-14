@@ -1,5 +1,5 @@
 import actionTypes from './actionTypes';
-
+import DateYMD from '../Components/helpers/date';
 export const setTasksThunk = () => (dispatch) => {
     dispatch({ type: actionTypes.TOGGLE_LOADING, isLoading: true });
     fetch("http://localhost:3001/task")
@@ -118,8 +118,50 @@ export const removeAnyTasksThunk = (removeTasks) => (dispatch) => {
             dispatch({ type: actionTypes.TOGGLE_LOADING, isLoading: false });
         });
 }
+export const setSingleTaskThunk = (id, history) => (dispatch) => {
+    dispatch({ type: actionTypes.TOGGLE_ST_LOADING, loading: true });
+    fetch(`http://localhost:3001/task/${id}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.error) {
+                throw data.error;
+            }
+            dispatch({ type: actionTypes.SET_ST, task: data });
+            dispatch({ type: actionTypes.TOGGLE_ST_LOADING, loading: false });
+        })
+        .catch(error => {
+            history.push("/404");
+            console.log('error', error);
+        })
+}
+export const editSingleTaskThunk = (taskdata) => (dispatch) => {
 
-export const deleteSTThunk = (_id) => (dispatch) => {
+    taskdata.date = DateYMD(taskdata.date);
+    dispatch({ type: actionTypes.TOGGLE_ST_LOADING, loading: true });
+    fetch(`http://localhost:3001/task/${taskdata._id}`, {
+        method: "PUT",
+        body: JSON.stringify(taskdata),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.error) {
+                throw data.error;
+            }
+            dispatch({ type: actionTypes.TOGGLE_ST_MODAL })
+            dispatch({ type: actionTypes.SET_ST, task: data });
+        })
+        .catch(error => {
+            console.log(error)
+        })
+        .finally(() => {
+            dispatch({ type: actionTypes.TOGGLE_ST_LOADING, loading: false });
+        });
+}
+export const deleteSTThunk = (_id, history) => (dispatch) => {
+    dispatch({ type: actionTypes.TOGGLE_ST_LOADING, loading: true });
     fetch(`http://localhost:3001/task/${_id}`, {
         method: "DELETE",
         headers: {
@@ -131,10 +173,13 @@ export const deleteSTThunk = (_id) => (dispatch) => {
             if (data.error) {
                 throw data.error;
             }
-            dispatch({ type: "loading", loading: false });
+            dispatch({ type: actionTypes.TOGGLE_ST_LOADING, loading: false });
             history.push("/");
         })
         .catch(error => {
             console.log(error)
         })
+}
+export const toggleSTEditModal = (dispatch) => {
+    dispatch({ type: actionTypes.TOGGLE_ST_MODAL })
 }

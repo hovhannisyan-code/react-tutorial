@@ -1,20 +1,30 @@
 import actionTypes from '../actionTypes';
+import {
+    isRequired,
+    maxLength,
+    minLength,
+    emailValidation
+} from '../../Components/helpers/validators';
+const maxLength25 = maxLength(25);
+const minLength3 = minLength(3);
 const initialState = {
 
-    name: {
-        value: "",
-        valid: false,
-        error: null
-    },
-    email: {
-        value: "",
-        valid: false,
-        error: null
-    },
-    message: {
-        value: "",
-        valid: false,
-        error: null
+    formData: {
+        name: {
+            value: "",
+            valid: false,
+            error: null
+        },
+        email: {
+            value: "",
+            valid: false,
+            error: null
+        },
+        message: {
+            value: "",
+            valid: false,
+            error: null
+        }
     },
     loading: false
 
@@ -22,22 +32,52 @@ const initialState = {
 const reducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.CHANGE_CONTACT_FORM: {
-            const { name, value, error } = action.data;
-            console.log(action)
+            const { value, name } = action.data;
+            let error = null;
+            //validators
+            switch (name) {
+                case "name":
+                case "email":
+                case "message":
+                    error = isRequired(value) ||
+                        (name === "email" && emailValidation(value)) ||
+                        minLength3(value) ||
+                        maxLength25(value);
+                    break;
+                default: ;
+            }
             return {
                 ...state,
-                [name]: {
-                    value,
-                    valid: !!!error,
-                    error
+                formData: {
+                    ...state.formData,
+                    [name]: {
+                        value,
+                        valid: !!!error,
+                        error
+                    }
                 }
             }
         }
         case actionTypes.ADD_CONTACT_FORM: {
-            const contactFormEmptyState = action.data
             return {
                 ...state,
-                ...contactFormEmptyState
+                formData: {
+                    name: {
+                        value: "",
+                        valid: false,
+                        error: null
+                    },
+                    email: {
+                        value: "",
+                        valid: false,
+                        error: null
+                    },
+                    message: {
+                        value: "",
+                        valid: false,
+                        error: null
+                    }
+                }
             }
         }
         case actionTypes.TOGGLE_CONTACT_LOADING: {
