@@ -80,13 +80,6 @@ const reducer = (state = initialState, action) => {
                 }
             }
         }
-        case actionTypes.TOGGLE_CONTACT_LOADING: {
-            return {
-                ...state,
-                loading: action.isLoading
-
-            }
-        }
         default: return state;
     }
 }

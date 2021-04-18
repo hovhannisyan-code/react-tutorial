@@ -1,76 +1,43 @@
+import { useEffect } from "react";
 import { Form, Button } from "react-bootstrap";
 import Preloader from '../Loader/Preloader';
 import styles from './form.module.css';
-import Notifications, { notify } from 'react-notify-toast';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 /**
  * Redux
  */
 import { connect } from 'react-redux';
 import actionTypes from '../../Redux/actionTypes';
+import { addContactFormThunk } from '../../Redux/actions';
 const FormHook = (props) => {
-
-
-    const handleChange = (e) => { 
-        
-        props.changeInput(e.target);
-        
-        
-        
-    }
-    const handleAddContactForm = (e) => {
-        e.preventDefault();
-        props.toggleLoading(true);
-        const { formData } = props;
-        
-        const contactFormData = { ...formData };
-        for (let key in formData) {
-            contactFormData[key] = contactFormData[key].value
-        }
-        fetch("http://localhost:3001/form", {
-            method: 'POST',
-            body: JSON.stringify(contactFormData),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.error) {
-                    throw data.error;
-                }
-                notify.show('Your message has been sent successfully!', 'success');
-                props.addContactForm();
-            })
-            .catch(error => {
-                console.log(error)
-                if (typeof error.message === 'string') {
-                    error = error.message.replace('.body.', '').toLowerCase();
-                    error = error.charAt(0).toUpperCase() + error.slice(1);
-                }
-                notify.show(error, 'error');
-            })
-            .finally(() => {
-                props.toggleLoading(false);
-            });
-    }
-    //const { name, email, message } = formData;
     const {
         formData,
-        loading
+        loading,
+        responseMessage
     } = props;
-    const {name,email,message} = formData;
+    const { name, email, message } = formData;
     const isValid = name.valid && email.valid && message.valid;
-    console.log(props)
+    useEffect( () => {
+        responseMessage.type && toast[responseMessage.type](`🦄 ${responseMessage.text}`, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
+    },[responseMessage]);
     return (
-
         <>
             <Form onSubmit={(e) => e.preventDefault()}>
-                <Notifications />
+                <ToastContainer />
                 <Form.Group className={styles.formGroup} controlId="formBasicName">
                     <Form.Label>Name</Form.Label>
                     <Form.Control
                         name="name"
-                        onChange={handleChange}
+                        onChange={(e) => props.changeInput(e.target)}
                         value={name.value}
                         type="text"
                         placeholder="Name"
@@ -84,7 +51,7 @@ const FormHook = (props) => {
                     <Form.Label>Email</Form.Label>
                     <Form.Control
                         name="email"
-                        onChange={handleChange}
+                        onChange={(e) => props.changeInput(e.target)}
                         value={email.value}
                         type="email"
                         placeholder="Enter email"
@@ -98,7 +65,7 @@ const FormHook = (props) => {
                     <Form.Label>Message</Form.Label>
                     <Form.Control
                         name="message"
-                        onChange={handleChange}
+                        onChange={(e) => props.changeInput(e.target)}
                         placeholder="Message"
                         value={message.value}
                         as="textarea"
@@ -111,7 +78,7 @@ const FormHook = (props) => {
 
                 <Button
                     disabled={!isValid} //remove disabled 
-                    onClick={handleAddContactForm}
+                    onClick={() => props.handleAddContact(formData)}
                     variant="primary"
                     type="submit">
                     Submit
@@ -122,13 +89,10 @@ const FormHook = (props) => {
     )
 }
 const mapStateToProps = (state) => {
-    const {
-        formData,
-        loading
-    } = state.contactFormState;
     return {
-        formData,
-        loading
+        formData: state.contactFormState.formData,
+        loading: state.todoState.loading,
+        responseMessage: state.todoState.message,
     }
 }
 const mapDispatchToProps = (dispatch) => {
@@ -141,7 +105,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         toggleLoading: (isLoading) => {
             dispatch({ type: actionTypes.TOGGLE_CONTACT_LOADING, isLoading });
-        }
+        },
+
+        handleAddContact: (formData) => dispatch(addContactFormThunk(formData))
     }
 }
 const FormProvider = connect(mapStateToProps, mapDispatchToProps)(FormHook)

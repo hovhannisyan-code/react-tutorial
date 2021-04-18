@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import styles from './index.module.css';
 import { Card, Button, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash,faCheckSquare,faHourglassHalf } from '@fortawesome/free-solid-svg-icons';
 import Proptypes from 'prop-types';
 import DateYMD from '../../helpers/date';
 import { Link } from 'react-router-dom';
@@ -12,7 +12,8 @@ const Task = ({
     handleDelete,
     toggleSetRemoveIds,
     checked,
-    handleSetEditTask
+    handleSetEditTask,
+    handleToggleStatus
 }) => {
     return (
         <Card className={`rounded border-0 ${styles.custom_card} ${checked && styles.checked}`}>
@@ -56,6 +57,13 @@ const Task = ({
                     onClick={() => handleSetEditTask(task)}
                 >
                     <FontAwesomeIcon icon={faEdit} />
+                </Button>
+                <Button
+                    variant="info"
+                    className="ml-3"
+                    onClick={() => handleToggleStatus(task)}
+                >
+                    <FontAwesomeIcon icon={task.status ==='active' ? faHourglassHalf : faCheckSquare} />
                 </Button>
             </Card.Body>
         </Card>

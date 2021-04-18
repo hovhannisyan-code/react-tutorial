@@ -7,7 +7,11 @@ const initialState = {
     removeTasks: new Set(),
     isAllChecked: false,
     openTaskModal: false,
-    isConfirmModal: false
+    isConfirmModal: false,
+    message: {
+        type: "",
+        text: ""
+    }
 
 };
 
@@ -19,10 +23,29 @@ const reducer = (state = initialState, action) => {
                 tasks: action.data
             }
         }
+        case actionTypes.SET_MSG: {
+            return {
+                ...state,
+                message: {
+                    type: action.msgType,
+                    text: action.text
+                }
+            }
+        }
         case actionTypes.TOGGLE_LOADING: {
             return {
                 ...state,
-                loading: action.isLoading
+                loading: action.isLoading,
+                errorMsg: action.isLoading ? "" : state.errorMsg
+            }
+        }
+        case actionTypes.TOGGLE_STATUS_TASK: {
+            let tasks = [...state.tasks];
+            const idx = tasks.findIndex(task => task._id === action.task._id);
+            tasks[idx] = action.task;
+            return {
+                ...state,
+                tasks
             }
         }
         case actionTypes.DELETE_ONE_TASK: {

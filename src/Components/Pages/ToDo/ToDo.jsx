@@ -10,11 +10,15 @@ import { faList } from '@fortawesome/free-solid-svg-icons';
 import { connect } from 'react-redux';
 import actionTypes from '../../../Redux/actionTypes';
 import { Link } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Filter from '../../Filter/Filter';
 import {
     setTasksThunk,
     addOrEditTaskThunk,
     deleteOneTaskThunk,
-    removeAnyTasksThunk
+    removeAnyTasksThunk,
+    toggleStatusThunk
 } from '../../../Redux/actions';
 
 const ToDo = (props) => {
@@ -26,6 +30,7 @@ const ToDo = (props) => {
         isAllChecked,
         openTaskModal,
         isConfirmModal,
+        message,
         //functions
         toggleSetRemoveIds,
         toggleCheckAllTasks,
@@ -34,7 +39,8 @@ const ToDo = (props) => {
         setTasks,
         deleteTask,
         editTask,
-        deleteCheckedTasks
+        deleteCheckedTasks,
+        toggleStatus
     } = props
     const handleCatchValue = (taskdata) => {
         if (!taskdata.title || !taskdata.description) return;
@@ -46,8 +52,17 @@ const ToDo = (props) => {
     useEffect(() => {
         setTasks();
     }, [setTasks]);
-
-    console.log(removeTasks)
+    useEffect( () => {
+        message.type && toast[message.type](`🦄 ${message.text}`, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
+    },[message]);
     const Tasks = tasks.map((task, index) => {
         return (
             <Col
@@ -65,6 +80,7 @@ const ToDo = (props) => {
                     toggleSetRemoveIds={toggleSetRemoveIds}
                     checked={removeTasks.has(task._id)}
                     handleSetEditTask={toggleOpenTaskModal}
+                    handleToggleStatus={toggleStatus}
                 />
             </Col>
         )
@@ -77,9 +93,14 @@ const ToDo = (props) => {
             </li>
         )
     });
+    
     return (
         <>
+            
             <Col xl={3} lg={4} sm={3}>
+                <div className="card bg- mb-3">
+                    <Filter />
+                </div>
                 <div className="card bg- mb-3">
                     <div className="card-header bg-dark text-white text-uppercase"><FontAwesomeIcon icon={faList} className="mr-1" />Latest 5 tasks</div>
                     <ul className="list-group category_block">
@@ -95,6 +116,7 @@ const ToDo = (props) => {
                         <p className="bloc_left_price">99.00 $</p>
                     </div>
                 </div>
+                
             </Col>
             <Col xl={9} sm={9} md={9} lg={8}>
 
@@ -147,11 +169,13 @@ const ToDo = (props) => {
                 onSubmit={handleCatchValue}
             />}
             {loading && <Preloader />}
+            {
+                <ToastContainer />
+            }
         </>
     )
 }
 const mapStateToProps = (state) => {
-    console.log(state)
     const {
         tasks,
         loading,
@@ -159,7 +183,8 @@ const mapStateToProps = (state) => {
         editTask,
         openTaskModal,
         isAllChecked,
-        isConfirmModal
+        isConfirmModal,
+        message
     } = state.todoState;
     return {
         tasks,
@@ -168,7 +193,8 @@ const mapStateToProps = (state) => {
         editTask,
         openTaskModal,
         isAllChecked,
-        isConfirmModal
+        isConfirmModal,
+        message
     }
 }
 const mapDispatchToProps = (dispatch) => {
@@ -177,6 +203,7 @@ const mapDispatchToProps = (dispatch) => {
         addOrEditTask: (data) => dispatch(addOrEditTaskThunk(data)),
         deleteCheckedTasks: (removeTasks) => dispatch(removeAnyTasksThunk(removeTasks)),
         deleteTask: (_id) => dispatch(deleteOneTaskThunk(_id)),
+        toggleStatus: (task) => dispatch(toggleStatusThunk(task)),
 
         toggleLoading: (isLoading) => {
             dispatch({ type: actionTypes.TOGGLE_LOADING, isLoading });
