@@ -2,7 +2,7 @@ import actionTypes from './actionTypes';
 import DateYMD from '../Components/helpers/date';
 let API_URL = "";
 if (process.env.NODE_ENV === "production") {
-  API_URL = "https://suspicious-varahamihira-6cc41d.netlify.app";
+  API_URL = "https://react-gor-backend.herokuapp.com";
 } else {
   API_URL = "http://localhost:3001";
 }
