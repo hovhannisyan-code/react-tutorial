@@ -36,3 +36,27 @@
     transform: rotate(360deg);
   }
 }
+
+.author {
+  display: inline-flex;
+}
+.card { 
+  width: 300px;
+  padding: 25px;
+  border: 1px solid #00d8ff;
+}
+.card.active {
+  background: rgb(0 216 255 / 55%);
+  color: #a36cbf;
+}
+.cards-wrapper {
+  width: 70%;
+  display: flex;
+  justify-content: space-between;
+  margin: 100px auto;
+}
+@media (min-width: 1200px) {
+  .main-container {
+    max-width: 1440px !important;
+  } 
+}
