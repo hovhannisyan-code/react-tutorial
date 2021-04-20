@@ -1,9 +1,15 @@
 import actionTypes from './actionTypes';
 import DateYMD from '../Components/helpers/date';
+let API_URL = "";
+if (process.env.NODE_ENV === "production") {
+  API_URL = "https://suspicious-varahamihira-6cc41d.netlify.app";
+} else {
+  API_URL = "http://localhost:3001";
+}
 
 export const setTasksThunk = () => (dispatch) => {
     dispatch({ type: actionTypes.TOGGLE_LOADING, isLoading: true });
-    fetch("http://localhost:3001/task")
+    fetch(`${API_URL}/task`)
         .then(res => res.json())
         .then(data => {
             if (data.error) {
@@ -25,7 +31,7 @@ export const addOrEditTaskThunk = (taskdata) => (dispatch) => {
     dispatch({ type: actionTypes.TOGGLE_LOADING, isLoading: true });
     if (taskdata.edit) {
         dispatch({ type: actionTypes.TOGGLE_LOADING, isLoading: true });
-        fetch(`http://localhost:3001/task/${taskdata._id}`, {
+        fetch(`${API_URL}/task/${taskdata._id}`, {
             method: "PUT",
             body: JSON.stringify(taskdata),
             headers: {
@@ -50,7 +56,7 @@ export const addOrEditTaskThunk = (taskdata) => (dispatch) => {
                 dispatch({ type: actionTypes.TOGGLE_LOADING, isLoading: false });
             });
     } else {
-        fetch("http://localhost:3001/task", {
+        fetch(`${API_URL}/task`, {
             method: 'POST',
             body: JSON.stringify(taskdata),
             headers: {
@@ -79,7 +85,7 @@ export const addOrEditTaskThunk = (taskdata) => (dispatch) => {
 
 export const deleteOneTaskThunk = (_id) => (dispatch) => {
     dispatch({ type: actionTypes.TOGGLE_LOADING, isLoading: true });
-    fetch(`http://localhost:3001/task/${_id}`, {
+    fetch(`${API_URL}/task/${_id}`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json"
@@ -104,7 +110,7 @@ export const deleteOneTaskThunk = (_id) => (dispatch) => {
 
 export const removeAnyTasksThunk = (removeTasks) => (dispatch) => {
     dispatch({ type: actionTypes.TOGGLE_LOADING, isLoading: true });
-    fetch("http://localhost:3001/task", {
+    fetch(`${API_URL}/task`, {
         method: 'PATCH',
         body: JSON.stringify({ tasks: Array.from(removeTasks) }),
         headers: {
@@ -129,7 +135,7 @@ export const removeAnyTasksThunk = (removeTasks) => (dispatch) => {
 }
 export const setSingleTaskThunk = (id, history) => (dispatch) => {
     dispatch({ type: actionTypes.TOGGLE_ST_LOADING, loading: true });
-    fetch(`http://localhost:3001/task/${id}`)
+    fetch(`${API_URL}/task/${id}`)
         .then(res => res.json())
         .then(data => {
             if (data.error) {
@@ -147,7 +153,7 @@ export const editSingleTaskThunk = (taskdata) => (dispatch) => {
 
     taskdata.date = DateYMD(taskdata.date);
     dispatch({ type: actionTypes.TOGGLE_ST_LOADING, loading: true });
-    fetch(`http://localhost:3001/task/${taskdata._id}`, {
+    fetch(`${API_URL}/task/${taskdata._id}`, {
         method: "PUT",
         body: JSON.stringify(taskdata),
         headers: {
@@ -173,7 +179,7 @@ export const editSingleTaskThunk = (taskdata) => (dispatch) => {
 }
 export const deleteSTThunk = (_id, history) => (dispatch) => {
     dispatch({ type: actionTypes.TOGGLE_ST_LOADING, loading: true });
-    fetch(`http://localhost:3001/task/${_id}`, {
+    fetch(`${API_URL}/task/${_id}`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json"
@@ -222,7 +228,7 @@ export const addContactFormThunk = (formData) => (dispatch) => {
     }
 
 
-    fetch("http://localhost:3001/form", {
+    fetch(`${API_URL}/form`, {
         method: 'POST',
         body: JSON.stringify(contactFormData),
         headers: {
@@ -253,7 +259,7 @@ export const addContactFormThunk = (formData) => (dispatch) => {
 export const toggleStatusThunk = (task) => (dispatch) => {
     const status = task.status === "active" ? "done" : "active";
     dispatch({ type: actionTypes.TOGGLE_LOADING, isLoading: true });
-    fetch(`http://localhost:3001/task/${task._id}`, {
+    fetch(`${API_URL}/task/${task._id}`, {
         method: "PUT",
         body: JSON.stringify({ status }),
         headers: {
@@ -280,7 +286,7 @@ export const sortOrFilterTasksThunk = (queryData) => (dispatch) => {
         query += key + "=" + queryData[key] + "&";
     }
     dispatch({ type: actionTypes.TOGGLE_LOADING, isLoading: true });
-    fetch(`http://localhost:3001/task` + query.slice(0, query.length - 1))
+    fetch(`${API_URL}/task` + query.slice(0, query.length - 1))
         .then(res => res.json())
         .then(data => {
             if (data.error) throw data.error;
