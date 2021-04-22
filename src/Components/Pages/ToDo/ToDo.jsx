@@ -85,8 +85,8 @@ const ToDo = (props) => {
             </Col>
         )
     });
-    let TasksList = tasks.reverse().map((task, index) => {
-        // if (index === 5) return;
+    let TasksList = tasks.reverse().slice(Math.max(tasks.length - 5, 0)).map((task, index) => {
+        
         return (
             <li key={task._id} className="list-group-item">
                 <Link to={`/task/${task._id}`}>{task.title}</Link>

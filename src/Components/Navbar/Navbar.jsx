@@ -16,10 +16,6 @@ const menuItems = [
     {
         slug: "/about",
         menuName: "About Us"
-    },
-    {
-        slug: "/counter",
-        menuName: "Counter Redux"
     }
 ];
 
