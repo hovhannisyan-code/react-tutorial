@@ -107,15 +107,7 @@ const ToDo = (props) => {
                         {TasksList}
                     </ul>
                 </div>
-                <div className="card bg- mb-3">
-                    <div className="card-header bg-dark text-white text-uppercase">Last Task</div>
-                    <div className="card-body">
-                        <img className="img-fluid" src="https://dummyimage.com/600x400/55595c/fff" alt="Task" />
-                        <h5 className="card-title">Product title</h5>
-                        <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <p className="bloc_left_price">99.00 $</p>
-                    </div>
-                </div>
+                
                 
             </Col>
             <Col xl={9} sm={9} md={9} lg={8}>
