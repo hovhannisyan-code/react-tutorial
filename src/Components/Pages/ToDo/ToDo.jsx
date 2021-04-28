@@ -85,7 +85,7 @@ const ToDo = (props) => {
             </Col>
         )
     });
-    let last_tasks = tasks;
+    let last_tasks = [...tasks];
     let TasksList = last_tasks.reverse().slice(Math.max(tasks.length - 5, 0)).map((task, index) => {
         
         return (
