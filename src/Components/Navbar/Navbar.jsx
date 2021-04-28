@@ -2,8 +2,6 @@ import { Nav, Navbar, Container } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
 import styles from '../Navbar/navbar.module.css';
 import todologo from '../../img/images.png';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
 const menuItems = [
     {
         slug: "/",

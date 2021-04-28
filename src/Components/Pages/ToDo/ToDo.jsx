@@ -85,7 +85,8 @@ const ToDo = (props) => {
             </Col>
         )
     });
-    let TasksList = tasks.reverse().slice(Math.max(tasks.length - 5, 0)).map((task, index) => {
+    let last_tasks = tasks;
+    let TasksList = last_tasks.reverse().slice(Math.max(tasks.length - 5, 0)).map((task, index) => {
         
         return (
             <li key={task._id} className="list-group-item">
